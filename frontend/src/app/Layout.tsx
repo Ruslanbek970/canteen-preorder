@@ -39,7 +39,7 @@ export function Layout() {
             {token && me.data ? (
               <button
                 type="button"
-                className="rounded-lg px-2 py-1.5 text-sm font-medium text-white/90 hover:bg-white/15 hover:text-white"
+                className="rounded-lg px-2 py-1.5 text-sm font-medium text-white hover:bg-white/15"
                 onClick={() => void logout().then(() => navigate('/login'))}
               >
                 {t('auth.logout')}
@@ -65,7 +65,7 @@ export function Layout() {
                       `block whitespace-nowrap border-b-[3px] px-3 py-2 text-sm ${
                         isActive
                           ? 'border-white font-semibold text-white'
-                          : 'border-transparent text-white/85 hover:border-white/40 hover:text-white'
+                          : 'border-transparent text-white hover:border-white/50'
                       }`
                     }
                   >

@@ -19,7 +19,7 @@ export function HomePage() {
         <h1 className="relative text-3xl font-bold tracking-tight sm:text-4xl">
           {t('home.title')}
         </h1>
-        <p className="relative mx-auto mt-3 max-w-xl text-white/90">{t('home.subtitle')}</p>
+        <p className="relative mx-auto mt-3 max-w-xl text-white">{t('home.subtitle')}</p>
         <div className="on-brand relative mt-7 flex flex-col gap-2 sm:flex-row sm:justify-center">
           <Link
             to="/login"
