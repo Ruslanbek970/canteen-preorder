@@ -5,7 +5,11 @@ import type { Role } from '@/api/types';
 
 import { PlaceholderPage } from '@/components/PlaceholderPage';
 import { LoadingState } from '@/components/ui';
-import { AdminPage } from '@/features/admin/AdminPage';
+import { AdminBuildingsPage } from '@/features/admin/AdminBuildingsPage';
+import { AdminCanteensPage } from '@/features/admin/AdminCanteensPage';
+import { AdminGroupsPage } from '@/features/admin/AdminGroupsPage';
+import { AdminSchedulePage } from '@/features/admin/AdminSchedulePage';
+import { AdminUsersPage } from '@/features/admin/AdminUsersPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingPage } from '@/features/auth/OnboardingPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
@@ -102,7 +106,11 @@ export const routes: RouteObject[] = [
       { path: 'manager/dishes', element: guard(<DishesPage />, MANAGER) },
       { path: 'manager/ingredients', element: guard(<IngredientsPage />, MANAGER) },
       // admin
-      { path: 'admin', element: guard(<AdminPage />, ADMIN) },
+      { path: 'admin', element: guard(<AdminUsersPage />, ADMIN) },
+      { path: 'admin/canteens', element: guard(<AdminCanteensPage />, ADMIN) },
+      { path: 'admin/buildings', element: guard(<AdminBuildingsPage />, ADMIN) },
+      { path: 'admin/groups', element: guard(<AdminGroupsPage />, ADMIN) },
+      { path: 'admin/schedule', element: guard(<AdminSchedulePage />, ADMIN) },
       { path: '*', element: <PlaceholderPage titleKey="pages.notFound" /> },
     ],
   },

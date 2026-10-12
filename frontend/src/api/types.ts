@@ -566,3 +566,59 @@ export interface ForecastReport {
     backtest: ForecastScore[];
   }[];
 }
+
+// ---- phase 10: administration --------------------------------------------------------------
+
+export interface AdminUser {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  role: Role;
+  group_id: number | null;
+  group_code: string | null;
+  canteen_id: number | null;
+  canteen_name: string | null;
+  is_active: boolean;
+  email_verified: boolean;
+  created_at: string;
+}
+
+export interface AdminUserList {
+  items: AdminUser[];
+  total: number;
+}
+
+export interface AdminCanteen {
+  id: number;
+  building_id: number;
+  name: string;
+  slug: string | null;
+  opens_at: string;
+  closes_at: string;
+  default_slot_minutes: number;
+  default_slot_capacity: number;
+  pickup_shelves_count: number;
+  order_cutoff_minutes: number;
+  is_active: boolean;
+}
+
+export interface Building {
+  id: number;
+  name: string;
+  address: string | null;
+}
+
+export interface AdminGroup extends Group {
+  students: number;
+  lessons: number;
+}
+
+export interface ScheduleImportResult {
+  rows: number;
+  groups: string[];
+  errors: { line: number; code: string; message: string }[];
+  imported: boolean;
+  deleted: number;
+  created: number;
+}
