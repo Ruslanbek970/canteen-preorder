@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routers import (
     auth,
     health,
+    kitchen,
     manager_catalog,
     me,
     menu,
@@ -46,6 +47,7 @@ def create_app() -> FastAPI:
         slots.router,
         orders.router,
         payments.router,
+        kitchen.router,
     ):
         app.include_router(router, prefix=API_PREFIX)
     app.include_router(ws_routes.router)
