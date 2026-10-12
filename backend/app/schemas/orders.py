@@ -75,8 +75,12 @@ class CartLine(BaseModel):
     menu_item_id: int
     dish_id: int
     name_ru: str
+    name_kk: str | None
+    price: Decimal
+    discount_percent: int | None
     quantity: int
     available_portions: int
+    warning_for_me: bool
 
 
 class SkippedLine(BaseModel):

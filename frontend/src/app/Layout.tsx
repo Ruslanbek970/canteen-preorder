@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuthStore } from '@/features/auth/store';
 import { useLogout, useMe } from '@/features/auth/useMe';
+import { cartCount, useCartStore } from '@/features/cart/store';
 
 import { NAV } from './nav';
 
@@ -14,6 +15,7 @@ export function Layout() {
   const logout = useLogout();
   const navigate = useNavigate();
   const items = token && me.data ? NAV[me.data.role] : [];
+  const inCart = useCartStore((s) => cartCount(s.lines));
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -61,6 +63,11 @@ export function Layout() {
                     }
                   >
                     {t(item.labelKey)}
+                    {item.to === '/cart' && inCart > 0 && (
+                      <span className="ml-1 rounded-full bg-green-600 px-1.5 text-xs text-white">
+                        {inCart}
+                      </span>
+                    )}
                   </NavLink>
                 </li>
               ))}

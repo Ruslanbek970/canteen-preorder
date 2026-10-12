@@ -7,6 +7,7 @@ export interface NavItem {
 
 const CUSTOMER_NAV: NavItem[] = [
   { to: '/menu', labelKey: 'nav.menu' },
+  { to: '/cart', labelKey: 'nav.cart' },
   { to: '/orders', labelKey: 'nav.orders' },
   { to: '/profile', labelKey: 'nav.profile' },
 ];

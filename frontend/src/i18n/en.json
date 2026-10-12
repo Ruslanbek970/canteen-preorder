@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "admin": "Admin",
     "main": "Main navigation",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "cart": "Cart"
   },
   "home": {
     "title": "Canteen Pre-order",
@@ -118,7 +119,21 @@
     "ingredient_exists": "This ingredient already exists",
     "available_above_planned": "Left cannot exceed the plan",
     "duplicate_ingredient": "Ingredient listed twice",
-    "foreign_canteen": "This is another canteen"
+    "foreign_canteen": "This is another canteen",
+    "sold_out": "Not enough portions, {{available}} left",
+    "slot_full": "This slot is full, choose another one",
+    "slot_unavailable": "This slot is not available, choose another one",
+    "slot_not_found": "Slot not found",
+    "allergy_blocked": "The order contains a dish that is unsafe for you",
+    "allergy_ack_required": "Confirm ordering dishes with your allergens",
+    "email_not_verified": "Confirm your e-mail to place orders",
+    "menu_item_unavailable": "This dish is not available on that day",
+    "quantity_too_large": "No more than 10 of one dish",
+    "cancel_too_late": "A paid order can be cancelled no later than 30 minutes before pickup",
+    "invalid_transition": "This action is not available for the order now",
+    "status_changed": "The order status has changed, refresh the page",
+    "order_not_found": "Order not found",
+    "capacity_below_booked": "The slot already has {{booked}} orders, capacity cannot be lower"
   },
   "units": {
     "g": "g",
@@ -167,7 +182,8 @@
       "dashboard": "Today",
       "menu": "Menu by date",
       "dishes": "Dishes",
-      "ingredients": "Ingredients"
+      "ingredients": "Ingredients",
+      "slots": "Slots"
     },
     "syntheticNote": "Past weeks' sales history is synthetic (generated for the demo).",
     "dishes": {
@@ -209,6 +225,75 @@
       "available": "Left",
       "addDish": "Add a dish from the catalog",
       "save": "Save menu"
+    },
+    "slots": {
+      "title": "Pickup slots",
+      "empty": "No slots for this date yet.",
+      "generate": "Create slots from opening hours",
+      "time": "Time",
+      "booked": "Booked",
+      "capacity": "Capacity",
+      "state": "State",
+      "close": "Close",
+      "open": "Open"
+    }
+  },
+  "cart": {
+    "title": "Cart",
+    "add": "Add to cart",
+    "increase": "Add one more",
+    "decrease": "Remove one",
+    "openWith": "Cart · {{count}} items",
+    "empty": "Your cart is empty.",
+    "toMenu": "Go to the menu",
+    "clear": "Clear",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "allergyAck": "Some dishes contain your allergens (mild or moderate reaction). I understand the risk and still want to order.",
+    "placing": "Placing order…",
+    "place": "Order for {{total}}",
+    "chooseSlot": "Choose a pickup time",
+    "skipped": "Not added:",
+    "skipReason": {
+      "not_on_menu": "not on the menu",
+      "sold_out": "sold out",
+      "allergy": "unsafe for you"
+    }
+  },
+  "slots": {
+    "title": "Pickup time",
+    "free": "{{count}} free",
+    "noneToday": "There are no pickup slots for this day.",
+    "noneLeft": "No free slots left.",
+    "hiddenSchedule": "Hidden: {{count}} — your group has classes at that time.",
+    "hiddenTooLate": "Too late: {{count}} — orders close {{minutes}} min before pickup.",
+    "hiddenFull": "Full: {{count}}",
+    "hiddenClosed": "Closed by the canteen: {{count}}"
+  },
+  "orders": {
+    "empty": "You have no orders yet.",
+    "repeat": "Order again",
+    "number": "Order number",
+    "cancel": "Cancel order",
+    "cancelConfirm": "Cancel the order? The portions go back to the menu.",
+    "cancelUntil": "You can cancel until {{time}} and get a refund.",
+    "cancelClosed": "It is too late to cancel: pickup is less than 30 minutes away.",
+    "awaitingPayment": "The order is waiting for payment. Unpaid orders are cancelled after 10 minutes.",
+    "readyOnShelf": "Ready! Pick it up from shelf {{shelf}}.",
+    "noShowWarning": "You missed several pickups in the last 30 days. Please pick up your orders on time.",
+    "createdAt": "Created",
+    "paidAt": "Paid",
+    "readyAt": "Ready",
+    "pickedUpAt": "Picked up",
+    "status": {
+      "pending_payment": "Awaiting payment",
+      "paid": "Paid",
+      "cooking": "Cooking",
+      "ready": "Ready",
+      "picked_up": "Picked up",
+      "cancelled": "Cancelled",
+      "no_show": "Not picked up"
     }
   }
 }

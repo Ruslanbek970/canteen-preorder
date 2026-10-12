@@ -190,3 +190,97 @@ export interface ManagerMenu {
   items: ManagerMenuItem[];
   synthetic_history: boolean;
 }
+
+export interface Slot {
+  id: number;
+  slot_date: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  booked_count: number;
+  free: number;
+  is_closed: boolean;
+  discount_percent: number | null;
+  promotion_id: number | null;
+}
+
+export interface SlotsResponse {
+  canteen_id: number;
+  date: string;
+  slots: Slot[];
+  hidden: { by_schedule: number; too_late: number; full: number; closed: number };
+  total: number;
+  cutoff_minutes: number;
+  schedule_applied: boolean;
+}
+
+export interface ManagerSlots {
+  canteen_id: number;
+  date: string;
+  slots: Slot[];
+}
+
+export type OrderStatus =
+  'pending_payment' | 'paid' | 'cooking' | 'ready' | 'picked_up' | 'cancelled' | 'no_show';
+
+export interface OrderItem {
+  id: number;
+  menu_item_id: number;
+  dish_id: number;
+  name_ru: string;
+  name_kk: string | null;
+  quantity: number;
+  unit_price: string;
+  discount_amount: string;
+  line_total: string;
+  promotion_id: number | null;
+}
+
+export interface Order {
+  id: number;
+  order_number: string;
+  canteen_id: number;
+  canteen_name: string;
+  service_date: string;
+  channel: 'mobile_app' | 'web_qr' | 'cashier';
+  status: OrderStatus;
+  pickup_slot: { id: number; slot_date: string; starts_at: string; ends_at: string } | null;
+  subtotal: string;
+  discount_total: string;
+  total: string;
+  qr_token: string;
+  pickup_shelf: number | null;
+  allergy_warning_ack: boolean;
+  created_at: string;
+  paid_at: string | null;
+  ready_at: string | null;
+  picked_up_at: string | null;
+  items: OrderItem[];
+  payment_id: number | null;
+  payment_url: string | null;
+  can_cancel: boolean;
+  cancel_until: string | null;
+  no_show_warning: boolean;
+}
+
+export interface OrderList {
+  items: Order[];
+  total: number;
+}
+
+export interface RepeatResponse {
+  canteen_id: number;
+  date: string;
+  items: {
+    menu_item_id: number;
+    dish_id: number;
+    name_ru: string;
+    name_kk: string | null;
+    price: string;
+    discount_percent: number | null;
+    quantity: number;
+    available_portions: number;
+    warning_for_me: boolean;
+  }[];
+  skipped: { dish_id: number; name_ru: string; reason: 'not_on_menu' | 'sold_out' | 'allergy' }[];
+}

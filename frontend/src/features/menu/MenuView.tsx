@@ -12,7 +12,7 @@ import { useMenu } from './useMenu';
 interface Props {
   canteenId: number;
   signedIn: boolean;
-  action?: (item: MenuItem) => ReactNode;
+  action?: (item: MenuItem, date: string) => ReactNode;
 }
 
 /** Menu with date switch, category tabs and filters; shared by the student and public pages. */
@@ -113,7 +113,7 @@ export function MenuView({ canteenId, signedIn, action }: Props) {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((item) => (
-            <DishCard key={item.id} item={item} action={action?.(item)} />
+            <DishCard key={item.id} item={item} action={action?.(item, menu.data.date)} />
           ))}
         </div>
       )}

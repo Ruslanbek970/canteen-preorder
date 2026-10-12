@@ -414,6 +414,7 @@ def repeat_order(db: Session, user: User, order_id: int, day: date | None) -> Re
     }
     mine = allergy.user_allergies(db, user)
     by_dish = allergy.dish_allergens(db, dish_ids)
+    promos = pricing.item_promotions(db, [mi.id for mi in current.values()], clock.now_utc())
     lines: list[CartLine] = []
     skipped: list[SkippedLine] = []
     for item in order.items:
@@ -423,16 +424,21 @@ def repeat_order(db: Session, user: User, order_id: int, day: date | None) -> Re
             skipped.append(SkippedLine(dish_id=dish.id, name_ru=dish.name_ru, reason="not_on_menu"))
         elif mi.available_portions < 1:
             skipped.append(SkippedLine(dish_id=dish.id, name_ru=dish.name_ru, reason="sold_out"))
-        elif allergy.assess(by_dish.get(dish.id, []), mine).unsafe:
+        elif (check := allergy.assess(by_dish.get(dish.id, []), mine)).unsafe:
             skipped.append(SkippedLine(dish_id=dish.id, name_ru=dish.name_ru, reason="allergy"))
         else:
+            promo = promos.get(mi.id)
             lines.append(
                 CartLine(
                     menu_item_id=mi.id,
                     dish_id=dish.id,
                     name_ru=dish.name_ru,
+                    name_kk=dish.name_kk,
+                    price=mi.price,
+                    discount_percent=promo.discount_percent if promo else None,
                     quantity=min(item.quantity, mi.available_portions),
                     available_portions=mi.available_portions,
+                    warning_for_me=check.warning,
                 )
             )
     return RepeatResponse(canteen_id=order.canteen_id, date=day, items=lines, skipped=skipped)
