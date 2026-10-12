@@ -15,6 +15,7 @@ def build_scheduler() -> BlockingScheduler:
     scheduler = BlockingScheduler(timezone=tz, job_defaults={"coalesce": True, "max_instances": 1})
     scheduler.add_job(jobs.generate_slots, CronTrigger(hour=5, minute=0, timezone=tz))
     scheduler.add_job(jobs.expire_unpaid_orders, IntervalTrigger(minutes=1))
+    scheduler.add_job(jobs.mark_no_show, IntervalTrigger(minutes=5))
     return scheduler
 
 

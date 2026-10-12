@@ -8,7 +8,7 @@ from functools import wraps
 from typing import Any
 
 from app.db import SessionLocal
-from app.services import orders, slots
+from app.services import orders, pickup, slots
 
 log = logging.getLogger("worker")
 
@@ -38,3 +38,8 @@ def generate_slots(db) -> int:
 @job
 def expire_unpaid_orders(db) -> int:
     return orders.expire_unpaid_orders(db)
+
+
+@job
+def mark_no_show(db) -> int:
+    return pickup.mark_no_show(db)

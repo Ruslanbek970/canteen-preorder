@@ -10,6 +10,7 @@ from app.api.routers import (
     menu,
     orders,
     payments,
+    pickup,
     reference,
     slots,
 )
@@ -48,6 +49,7 @@ def create_app() -> FastAPI:
         orders.router,
         payments.router,
         kitchen.router,
+        pickup.router,
     ):
         app.include_router(router, prefix=API_PREFIX)
     app.include_router(ws_routes.router)

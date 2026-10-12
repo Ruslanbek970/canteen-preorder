@@ -242,4 +242,4 @@ def test_scheduler_has_jobs():
     from worker.main import build_scheduler
 
     names = {j.func.__name__ for j in build_scheduler().get_jobs()}
-    assert names == {"generate_slots", "expire_unpaid_orders"}
+    assert names == {"generate_slots", "expire_unpaid_orders", "mark_no_show"}
