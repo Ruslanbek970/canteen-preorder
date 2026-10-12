@@ -39,8 +39,8 @@ format:
 	$(COMPOSE) run --rm --no-deps backend sh -c "ruff format . && ruff check --fix ."
 	$(COMPOSE) run --rm --no-deps frontend npm run format
 
-e2e:
-	@echo "Playwright e2e tests are added in phase 11 (SPEC 13)."
+e2e: ## Playwright end-to-end test (needs `make dev` running)
+	cd frontend && npm run e2e
 
 load-test:
 	@echo "k6 load test is added in phase 11 (SPEC 13)."

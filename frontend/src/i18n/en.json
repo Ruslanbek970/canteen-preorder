@@ -138,7 +138,9 @@
     "payment_not_pending": "The payment has already been processed",
     "payment_not_found": "Payment not found",
     "waste_above_available": "You cannot write off more than is left",
-    "menu_item_not_found": "Dish not found on the menu"
+    "menu_item_not_found": "Dish not found on the menu",
+    "order_not_ready": "The order is not ready yet",
+    "invalid_order_number": "Invalid order number"
   },
   "units": {
     "g": "g",
@@ -366,5 +368,30 @@
       "done": "Written off: {{list}}.",
       "kept": "Kept for tomorrow: {{list}}."
     }
+  },
+  "pickup": {
+    "section": "Pickup and till",
+    "number": "Order number",
+    "numberPlaceholder": "A-007 or 7",
+    "find": "Find",
+    "cameraOn": "Scan QR with the camera",
+    "cameraOff": "Turn the camera off",
+    "noCamera": "The camera is not available. Type the order number.",
+    "hint": "Scan the student's QR code or type the order number.",
+    "shelf": "Shelf",
+    "handOver": "Hand over",
+    "stillCooking": "Still cooking"
+  },
+  "pos": {
+    "cart": "Sale",
+    "empty": "Tap a dish to add it.",
+    "method": "Payment method",
+    "methods": {
+      "cash": "Cash",
+      "kaspi_qr": "Kaspi QR"
+    },
+    "sell": "Sell",
+    "sold": "Sold: {{number}}, {{total}}",
+    "receipt": "receipt {{number}}"
   }
 }

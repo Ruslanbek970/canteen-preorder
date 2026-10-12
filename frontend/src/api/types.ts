@@ -365,3 +365,28 @@ export interface CloseDayResult {
   written_off: WasteRecord[];
   kept: { name: string; quantity: number }[];
 }
+
+export interface PickupOrder {
+  id: number;
+  order_number: string;
+  status: OrderStatus;
+  pickup_shelf: number | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  customer_name: string | null;
+  items: KitchenLine[];
+  total: string;
+  allergy_flag: string | null;
+  picked_up_at: string | null;
+}
+
+export interface PosReceipt {
+  order_id: number;
+  order_number: string;
+  method: 'cash' | 'kaspi_qr';
+  subtotal: string;
+  discount_total: string;
+  total: string;
+  fiscal_receipt_number: string | null;
+  items: KitchenLine[];
+}

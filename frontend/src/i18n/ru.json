@@ -138,7 +138,9 @@
     "payment_not_pending": "Платёж уже обработан",
     "payment_not_found": "Платёж не найден",
     "waste_above_available": "Нельзя списать больше, чем осталось",
-    "menu_item_not_found": "Блюдо не найдено в меню"
+    "menu_item_not_found": "Блюдо не найдено в меню",
+    "order_not_ready": "Заказ ещё не готов",
+    "invalid_order_number": "Неверный номер заказа"
   },
   "units": {
     "g": "г",
@@ -366,5 +368,30 @@
       "done": "Списано: {{list}}.",
       "kept": "Остаётся на завтра: {{list}}."
     }
+  },
+  "pickup": {
+    "section": "Выдача и касса",
+    "number": "Номер заказа",
+    "numberPlaceholder": "A-007 или 7",
+    "find": "Найти",
+    "cameraOn": "Сканировать QR камерой",
+    "cameraOff": "Выключить камеру",
+    "noCamera": "Камера недоступна. Введите номер заказа вручную.",
+    "hint": "Отсканируйте QR-код студента или введите номер заказа.",
+    "shelf": "Полка",
+    "handOver": "Выдать",
+    "stillCooking": "Ещё готовится"
+  },
+  "pos": {
+    "cart": "Чек",
+    "empty": "Нажмите на блюдо, чтобы добавить.",
+    "method": "Способ оплаты",
+    "methods": {
+      "cash": "Наличные",
+      "kaspi_qr": "Kaspi QR"
+    },
+    "sell": "Продать",
+    "sold": "Продано: {{number}}, {{total}}",
+    "receipt": "чек {{number}}"
   }
 }
