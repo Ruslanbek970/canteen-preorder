@@ -42,6 +42,11 @@ def main() -> None:
             with SessionLocal() as db:
                 days = synthetic_history.generate_for_active(db)
             log.info("synthetic history: %s days added", days)
+            from ml import forecast
+
+            with SessionLocal() as db:
+                forecast.prepare_active(db)
+            log.info("demand forecast ready")
         else:
             seed.main()
     # The worker regenerates slots daily at 05:00; this covers a fresh start.

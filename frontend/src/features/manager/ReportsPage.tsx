@@ -13,9 +13,17 @@ import {
   YAxis,
 } from 'recharts';
 
-import type { PeakReport, RatingsReport, ReportName, SalesReport, WasteReport } from '@/api/types';
+import type {
+  ForecastReport,
+  PeakReport,
+  RatingsReport,
+  ReportName,
+  SalesReport,
+  WasteReport,
+} from '@/api/types';
 import {
   Alert,
+  Badge,
   Button,
   Card,
   EmptyState,
@@ -35,6 +43,7 @@ const TABS: { name: ReportName; labelKey: string }[] = [
   { name: 'waste', labelKey: 'manager.reports.tabs.waste' },
   { name: 'peak-hours', labelKey: 'manager.reports.tabs.peak' },
   { name: 'ratings', labelKey: 'manager.reports.tabs.ratings' },
+  { name: 'forecast', labelKey: 'manager.reports.tabs.forecast' },
 ];
 const PRESETS = [7, 28, 56];
 const WASTE_COLORS = {
@@ -136,6 +145,7 @@ export function ReportsPage() {
       {tab === 'waste' && <WasteTab period={period} />}
       {tab === 'peak-hours' && <PeakTab period={period} />}
       {tab === 'ratings' && <RatingsTab period={period} />}
+      {tab === 'forecast' && <ForecastTab period={period} />}
     </ManagerShell>
   );
 }
@@ -449,6 +459,121 @@ function RatingsTab({ period }: { period: Period }) {
             </li>
           ))}
         </ul>
+      )}
+    </ReportFrame>
+  );
+}
+
+const MODEL_NAMES: Record<string, string> = {
+  baseline_avg: 'baseline_avg',
+  gbm_v1: 'gbm_v1',
+};
+
+function ForecastTab({ period }: { period: Period }) {
+  const { t } = useTranslation();
+  const query = useReport<ForecastReport>('forecast', period);
+  return (
+    <ReportFrame query={query} isEmpty={(d) => d.days.length === 0 && d.upcoming.length === 0}>
+      {(data) => (
+        <>
+          <p className="max-w-3xl text-sm text-slate-500">{t('manager.reports.forecastIntro')}</p>
+          {data.days.length > 0 && (
+            <>
+              <Numbers
+                items={[
+                  ...data.models.map((m): [string, ReactNode] => [
+                    t('manager.reports.maeOf', { model: MODEL_NAMES[m.model] ?? m.model }),
+                    t('manager.reports.portionsValue', { value: m.mae.toFixed(1) }),
+                  ]),
+                  [
+                    t('manager.reports.servedMape'),
+                    percent(data.served ? Number(data.served.mape.toFixed(1)) : null),
+                  ],
+                  [
+                    t('manager.reports.better'),
+                    data.better ? (MODEL_NAMES[data.better] ?? data.better) : '—',
+                  ],
+                ]}
+              />
+              <ChartCard title={t('manager.reports.forecastByDay')}>
+                <LineChart
+                  data={data.days.map((d) => ({
+                    day: formatDay(d.date),
+                    actual: d.actual,
+                    baseline: d.baseline_avg === null ? null : Math.round(d.baseline_avg),
+                    gbm: d.gbm_v1 === null ? null : Math.round(d.gbm_v1),
+                  }))}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" fontSize={12} />
+                  <YAxis fontSize={12} width={50} />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    dataKey="actual"
+                    name={t('manager.reports.actual')}
+                    stroke="#0f172a"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    dataKey="baseline"
+                    name="baseline_avg"
+                    stroke="#94a3b8"
+                    strokeDasharray="5 4"
+                  />
+                  <Line dataKey="gbm" name="gbm_v1" stroke="#16a34a" />
+                </LineChart>
+              </ChartCard>
+              <Card>
+                <h2 className="mb-2 font-semibold">{t('manager.reports.models')}</h2>
+                <Table
+                  head={[t('manager.reports.model'), 'MAE', 'MAPE', t('manager.reports.positions')]}
+                  rows={data.models.map((m) => [
+                    <span key="name" className="flex items-center gap-2">
+                      {MODEL_NAMES[m.model] ?? m.model}
+                      {m.model === data.better && (
+                        <Badge tone="green">{t('manager.reports.moreAccurate')}</Badge>
+                      )}
+                    </span>,
+                    m.mae.toFixed(2),
+                    percent(Number(m.mape.toFixed(1))),
+                    m.n,
+                  ])}
+                />
+              </Card>
+              <Card>
+                <h2 className="mb-2 font-semibold">{t('manager.reports.byDish')}</h2>
+                <Table
+                  head={[
+                    t('manager.reports.dish'),
+                    t('manager.reports.actual'),
+                    t('manager.reports.forecast'),
+                    'MAE',
+                  ]}
+                  rows={data.dishes.map((d) => [d.dish_name, d.actual, d.forecast, d.mae])}
+                />
+              </Card>
+            </>
+          )}
+          {data.upcoming.length > 0 && (
+            <Card>
+              <h2 className="mb-2 font-semibold">{t('manager.reports.upcoming')}</h2>
+              <Table
+                head={[
+                  t('manager.reports.day'),
+                  t('manager.reports.servedModel'),
+                  'MAE baseline_avg',
+                  'MAE gbm_v1',
+                ]}
+                rows={data.upcoming.map((u) => {
+                  const mae = (name: string) =>
+                    u.backtest.find((b) => b.model === name)?.mae.toFixed(2) ?? '—';
+                  return [formatDay(u.target_date), u.model, mae('baseline_avg'), mae('gbm_v1')];
+                })}
+              />
+            </Card>
+          )}
+        </>
       )}
     </ReportFrame>
   );

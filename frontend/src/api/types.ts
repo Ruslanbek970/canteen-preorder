@@ -480,7 +480,7 @@ export interface RatingsReport extends ReportBase {
   }[];
 }
 
-export type ReportName = 'sales' | 'waste' | 'peak-hours' | 'ratings';
+export type ReportName = 'sales' | 'waste' | 'peak-hours' | 'ratings' | 'forecast';
 
 // ---- phase 8: notifications and discounts -------------------------------------------------
 
@@ -529,4 +529,40 @@ export interface Promotion {
   slot_ends_at: string | null;
   slot_booked: number | null;
   slot_capacity: number | null;
+}
+
+// ---- phase 9: demand forecast --------------------------------------------------------------
+
+export type ForecastModel = 'baseline_avg' | 'gbm_v1';
+
+export interface ForecastScore {
+  model: ForecastModel | 'served';
+  mae: number;
+  mape: number;
+  n: number;
+}
+
+export interface ForecastReport {
+  from_date: string;
+  to_date: string;
+  synthetic_history_until: string | null;
+  days: {
+    date: string;
+    actual: number;
+    forecast: number;
+    baseline_avg: number | null;
+    gbm_v1: number | null;
+  }[];
+  models: ForecastScore[];
+  served: ForecastScore | null;
+  better: ForecastModel | null;
+  dishes: { dish_id: number; dish_name: string; actual: number; forecast: number; mae: number }[];
+  upcoming: {
+    target_date: string;
+    run_at: string;
+    model: ForecastModel;
+    mae: number | null;
+    mape: number | null;
+    backtest: ForecastScore[];
+  }[];
 }

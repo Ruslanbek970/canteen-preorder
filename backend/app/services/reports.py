@@ -1,4 +1,5 @@
-"""Manager dashboard and reports (SPEC 8.8, 9.4): sales, waste, peak slots, ratings, CSV."""
+"""Manager dashboard and reports (SPEC 8.8, 9.4): sales, waste, peak slots, ratings, CSV.
+The forecast report itself lives in `forecast_report`."""
 
 import csv
 import io
@@ -54,7 +55,7 @@ SOLD = (
 )
 DEFAULT_DAYS = 28
 MAX_DAYS = 366
-REPORTS = ("sales", "waste", "peak-hours", "ratings")
+REPORTS = ("sales", "waste", "peak-hours", "ratings", "forecast")
 
 
 def period(from_date: date | None, to_date: date | None, days: int = DEFAULT_DAYS):
@@ -455,6 +456,16 @@ def report_csv(
         ).all()
         return filename, _csv(
             ["date", "dish", "reason", "portions"], [[d, n, r.value, p] for d, n, r, p in rows]
+        )
+    if name == "forecast":
+        from app.services.forecast_report import forecast_rows
+
+        rows = [
+            [day, dish, sold, served, p.get("baseline_avg"), p.get("gbm_v1")]
+            for day, _, dish, sold, served, p in forecast_rows(db, canteen_id, from_date, to_date)
+        ]
+        return filename, _csv(
+            ["date", "dish", "actual", "forecast", "baseline_avg", "gbm_v1"], rows
         )
     if name == "peak-hours":
         report = peak_hours(db, canteen_id, from_date, to_date)

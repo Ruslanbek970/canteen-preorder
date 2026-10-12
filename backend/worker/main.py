@@ -24,6 +24,7 @@ def build_scheduler() -> BlockingScheduler:
     scheduler.add_job(jobs.suggest_off_peak, CronTrigger(minute="0,30", timezone=tz))
     scheduler.add_job(jobs.expire_promotions, IntervalTrigger(minutes=10))
     scheduler.add_job(jobs.deliver_push, IntervalTrigger(seconds=15))
+    scheduler.add_job(jobs.forecast_tomorrow, CronTrigger(hour=2, minute=0, timezone=tz))
     return scheduler
 
 

@@ -251,4 +251,5 @@ def test_scheduler_has_jobs():
         "suggest_off_peak",
         "expire_promotions",
         "deliver_push",
+        "forecast_tomorrow",
     }

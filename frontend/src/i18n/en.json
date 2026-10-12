@@ -306,7 +306,8 @@
         "sales": "Sales",
         "waste": "Waste",
         "peak": "Peak slots",
-        "ratings": "Ratings"
+        "ratings": "Ratings",
+        "forecast": "Forecast"
       },
       "synthetic": "Data up to and including {{date}} is synthetic: the history was generated for the demo (ml/synthetic_history.py).",
       "empty": "No data for this period.",
@@ -345,7 +346,22 @@
       "reviews_few": "{{count}} reviews",
       "reviews_many": "{{count}} reviews",
       "reviews_other": "{{count}} reviews",
-      "distribution": "Rating distribution"
+      "distribution": "Rating distribution",
+      "forecastIntro": "Every night at 02:00 the system forecasts portions for the next days with two models: baseline_avg (the mean of the last 4 same weekdays) and gbm_v1 (gradient boosting). The menu gets the one that erred less over the last 2 weeks. Here: past forecasts against what was actually sold.",
+      "maeOf": "MAE {{model}}",
+      "portionsValue": "{{value}} portions",
+      "servedMape": "MAPE of the served forecast",
+      "better": "More accurate",
+      "forecastByDay": "Portions per day: actual and forecast",
+      "actual": "Actual",
+      "forecast": "Forecast",
+      "models": "Model comparison",
+      "model": "Model",
+      "positions": "Menu items",
+      "moreAccurate": "more accurate",
+      "upcoming": "Forecast for the coming days",
+      "day": "Day",
+      "servedModel": "Model in the menu"
     },
     "promotions": {
       "title": "Discounts",

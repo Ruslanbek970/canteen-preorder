@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import type { Dashboard, RatingsReport, SalesReport } from '@/api/types';
+import type { Dashboard, ForecastReport, RatingsReport, SalesReport } from '@/api/types';
 import { lastDays } from '@/features/manager/reportsApi';
 
 import { makeMe, mockApi, renderApp } from './utils';
@@ -153,6 +153,51 @@ describe('reports', () => {
     expect(await screen.findByText('★ 4.6')).toBeInTheDocument();
     expect(screen.getByText('20 отзывов')).toBeInTheDocument();
     expect(screen.getByText(/Как дома!/)).toBeInTheDocument();
+  });
+
+  it('compares the forecast models with the facts', async () => {
+    const forecast: ForecastReport = {
+      from_date: '2026-09-15',
+      to_date: '2026-10-12',
+      synthetic_history_until: '2026-10-09',
+      days: [
+        { date: '2026-10-08', actual: 700, forecast: 690, baseline_avg: 720.4, gbm_v1: 690.2 },
+        { date: '2026-10-09', actual: 540, forecast: 560, baseline_avg: 520, gbm_v1: 560.4 },
+      ],
+      models: [
+        { model: 'baseline_avg', mae: 7.06, mape: 11.3, n: 22 },
+        { model: 'gbm_v1', mae: 6.14, mape: 9.91, n: 22 },
+      ],
+      served: { model: 'served', mae: 6.2, mape: 10.04, n: 22 },
+      better: 'gbm_v1',
+      dishes: [{ dish_id: 4, dish_name: 'Плов', actual: 210, forecast: 199, mae: 9.5 }],
+      upcoming: [
+        {
+          target_date: '2026-10-13',
+          run_at: '2026-10-12T21:00:00Z',
+          model: 'gbm_v1',
+          mae: 6.14,
+          mape: 9.91,
+          backtest: [
+            { model: 'baseline_avg', mae: 7.06, mape: 11.3, n: 110 },
+            { model: 'gbm_v1', mae: 6.14, mape: 9.91, n: 110 },
+          ],
+        },
+      ],
+    };
+    mockApi({
+      '/me': makeMe('canteen_manager'),
+      '/manager/reports/sales': { ...sales, days: [] },
+      '/manager/reports/forecast': forecast,
+    });
+    renderApp('/manager/reports', makeMe('canteen_manager'));
+    fireEvent.click(await screen.findByRole('tab', { name: 'Прогноз' }));
+    expect(await screen.findAllByText('MAE gbm_v1')).toHaveLength(2); // a card and a column
+    expect(screen.getByText('6.1 порц.')).toBeInTheDocument();
+    expect(screen.getByText('точнее')).toBeInTheDocument();
+    expect(screen.getByText('Плов')).toBeInTheDocument();
+    expect(screen.getByText('Прогноз на ближайшие дни')).toBeInTheDocument();
+    expect(screen.getAllByText('7.06')).toHaveLength(2); // the period and the backtest
   });
 
   it('is closed to students', async () => {

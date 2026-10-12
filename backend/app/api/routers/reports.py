@@ -4,8 +4,15 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Response
 
 from app.api.deps import DB, ManagedCanteen
-from app.schemas.reports import Dashboard, PeakReport, RatingsReport, SalesReport, WasteReport
-from app.services import reports
+from app.schemas.reports import (
+    Dashboard,
+    ForecastReport,
+    PeakReport,
+    RatingsReport,
+    SalesReport,
+    WasteReport,
+)
+from app.services import forecast_report, reports
 
 router = APIRouter(prefix="/manager", tags=["reports"])
 
@@ -36,6 +43,13 @@ def peak_hours(canteen_id: ManagedCanteen, db: DB, from_: From = None, to: To = 
 @router.get("/reports/ratings", response_model=RatingsReport)
 def ratings(canteen_id: ManagedCanteen, db: DB, from_: From = None, to: To = None) -> RatingsReport:
     return reports.ratings(db, canteen_id, *reports.period(from_, to, days=56))
+
+
+@router.get("/reports/forecast", response_model=ForecastReport)
+def forecast(
+    canteen_id: ManagedCanteen, db: DB, from_: From = None, to: To = None
+) -> ForecastReport:
+    return forecast_report.forecast_report(db, canteen_id, *reports.period(from_, to))
 
 
 @router.get("/reports/{name}.csv")

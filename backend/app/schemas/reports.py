@@ -131,3 +131,47 @@ class RatingsReport(BaseModel):
     to_date: date
     dishes: list[DishRating]
     synthetic_history_until: date | None
+
+
+class ForecastScore(BaseModel):
+    model: str
+    mae: float
+    mape: float
+    n: int
+
+
+class ForecastDay(BaseModel):
+    date: date
+    actual: int
+    forecast: int
+    baseline_avg: float | None
+    gbm_v1: float | None
+
+
+class ForecastDish(BaseModel):
+    dish_id: int
+    dish_name: str
+    actual: int
+    forecast: int
+    mae: float
+
+
+class ForecastRunInfo(BaseModel):
+    target_date: date
+    run_at: datetime
+    model: str
+    mae: float | None
+    mape: float | None
+    backtest: list[ForecastScore]
+
+
+class ForecastReport(BaseModel):
+    from_date: date
+    to_date: date
+    synthetic_history_until: date | None
+    days: list[ForecastDay]
+    models: list[ForecastScore]
+    served: ForecastScore | None
+    better: str | None
+    dishes: list[ForecastDish]
+    upcoming: list[ForecastRunInfo]

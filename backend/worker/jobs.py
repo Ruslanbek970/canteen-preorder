@@ -70,3 +70,11 @@ def expire_promotions(db) -> int:
 @job
 def deliver_push(db) -> int:
     return push.deliver_queued(db)
+
+
+@job
+def forecast_tomorrow(db) -> int:
+    # Imported here: scikit-learn is heavy and only this job needs it.
+    from ml import forecast
+
+    return forecast.forecast_upcoming(db)
