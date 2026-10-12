@@ -55,14 +55,16 @@ export function Field({
 }
 
 const INPUT =
-  'block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-slate-700 dark:bg-slate-900';
+  'block rounded-lg border border-slate-300 bg-white px-3 py-2 text-base focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-slate-700 dark:bg-slate-900';
+
+const widthOf = (className: string) => (/(^|\s)w-/.test(className) ? '' : 'w-full');
 
 export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={`${INPUT} ${className}`} {...props} />;
+  return <input className={`${INPUT} ${widthOf(className)} ${className}`} {...props} />;
 }
 
 export function Select({ className = '', ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={`${INPUT} ${className}`} {...props} />;
+  return <select className={`${INPUT} ${widthOf(className)} ${className}`} {...props} />;
 }
 
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {

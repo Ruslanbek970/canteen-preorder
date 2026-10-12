@@ -94,7 +94,11 @@
     "saved": "Saved",
     "skip": "Skip",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "add": "Add",
+    "back": "Back",
+    "edit": "Edit",
+    "remove": "Remove"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -107,6 +111,104 @@
     "user_blocked": "The account is blocked",
     "validation_error": "Check the entered data",
     "forbidden": "Access denied",
-    "health_consent_required": "Consent to store health data is required"
+    "health_consent_required": "Consent to store health data is required",
+    "menu_date_unavailable": "The menu for this date is not available yet",
+    "planned_below_sold": "{{taken}} portions already ordered; the plan cannot be lower",
+    "menu_item_has_orders": "The dish has orders and cannot be removed from the menu",
+    "ingredient_exists": "This ingredient already exists",
+    "available_above_planned": "Left cannot exceed the plan",
+    "duplicate_ingredient": "Ingredient listed twice",
+    "foreign_canteen": "This is another canteen"
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "pcs": "pcs"
+  },
+  "menu": {
+    "all": "All",
+    "allergens": "Allergens",
+    "calories": "Kcal",
+    "protein": "Protein, g",
+    "fat": "Fat, g",
+    "carbs": "Carbs, g",
+    "weight": "Weight, g",
+    "canteen": "Canteen",
+    "categories": "Categories",
+    "date": "Day",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "empty": "No menu for this day yet",
+    "nothingMatches": "No dishes match the filters",
+    "noCanteens": "No canteens available",
+    "goOrder": "Go to ordering",
+    "loginToOrder": "Sign in to order",
+    "hours": "Open {{from}}–{{to}}",
+    "grams": "{{value}} g",
+    "kcal": "{{value}} kcal",
+    "pfc": "P {{p}} · F {{f}} · C {{c}}",
+    "halal": "Halal",
+    "vegetarian": "Vegetarian",
+    "withoutMyAllergens": "Without my allergens",
+    "left": "{{count}} left",
+    "soldOut": "Sold out",
+    "unsafe": "Unsafe for you: contains your allergen. Cannot be ordered.",
+    "warning": "Contains your allergen. Can be ordered after confirmation.",
+    "verifyToOrder": "Confirm your e-mail to place orders.",
+    "nutrition": "Nutrition",
+    "ingredients": "Ingredients",
+    "noAllergens": "none",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet"
+  },
+  "manager": {
+    "section": "Manager sections",
+    "tabs": {
+      "dashboard": "Today",
+      "menu": "Menu by date",
+      "dishes": "Dishes",
+      "ingredients": "Ingredients"
+    },
+    "syntheticNote": "Past weeks' sales history is synthetic (generated for the demo).",
+    "dishes": {
+      "title": "Dish catalog",
+      "new": "New dish",
+      "edit": "Edit dish",
+      "empty": "No dishes yet",
+      "name": "Dish",
+      "nameRu": "Name (Russian)",
+      "nameKk": "Name (Kazakh)",
+      "category": "Category",
+      "price": "Price, ₸",
+      "description": "Description",
+      "shelfLife": "Shelf life, h",
+      "is_halal": "Halal",
+      "is_vegetarian": "Vegetarian",
+      "is_active": "Active",
+      "inactive": "inactive",
+      "recipe": "Recipe per portion",
+      "ingredient": "Ingredient",
+      "quantity": "Quantity",
+      "addIngredient": "+ ingredient",
+      "allergenPreview": "Dish allergens"
+    },
+    "ingredients": {
+      "title": "Ingredients",
+      "add": "New ingredient",
+      "empty": "No ingredients yet",
+      "name": "Name",
+      "unit": "Unit"
+    },
+    "menu": {
+      "title": "Menu by date",
+      "date": "Date",
+      "empty": "No dishes on this date yet. Add from the catalog.",
+      "forecast": "Forecast",
+      "planned": "Planned",
+      "sold": "Ordered",
+      "available": "Left",
+      "addDish": "Add a dish from the catalog",
+      "save": "Save menu"
+    }
   }
 }

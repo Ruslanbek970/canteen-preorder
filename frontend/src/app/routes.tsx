@@ -10,7 +10,11 @@ import { OnboardingPage } from '@/features/auth/OnboardingPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { VerifyEmailPage } from '@/features/auth/VerifyEmailPage';
 import { KitchenPage } from '@/features/kitchen/KitchenPage';
+import { DishesPage } from '@/features/manager/DishesPage';
+import { IngredientsPage } from '@/features/manager/IngredientsPage';
 import { ManagerDashboardPage } from '@/features/manager/ManagerDashboardPage';
+import { ManagerMenuPage } from '@/features/manager/ManagerMenuPage';
+import { DishPage } from '@/features/menu/DishPage';
 import { MenuPage } from '@/features/menu/MenuPage';
 import { PublicCanteenPage } from '@/features/menu/PublicCanteenPage';
 import { OrdersPage } from '@/features/orders/OrdersPage';
@@ -50,6 +54,7 @@ export const routes: RouteObject[] = [
       { path: 'register', element: <RegisterPage /> },
       { path: 'verify', element: <VerifyEmailPage /> },
       { path: 'c/:slug', element: <PublicCanteenPage /> },
+      { path: 'dishes/:id', element: <DishPage /> },
       { path: 'onboarding', element: guard(<OnboardingPage />, CUSTOMER) },
       { path: 'profile', element: guard(<ProfilePage />) },
       // student / teacher
@@ -62,6 +67,9 @@ export const routes: RouteObject[] = [
       { path: 'pos', element: guard(<PosPage />, PICKUP) },
       // canteen_manager
       { path: 'manager', element: guard(<ManagerDashboardPage />, MANAGER) },
+      { path: 'manager/menu', element: guard(<ManagerMenuPage />, MANAGER) },
+      { path: 'manager/dishes', element: guard(<DishesPage />, MANAGER) },
+      { path: 'manager/ingredients', element: guard(<IngredientsPage />, MANAGER) },
       // admin
       { path: 'admin', element: guard(<AdminPage />, ADMIN) },
       { path: '*', element: <PlaceholderPage titleKey="pages.notFound" /> },
