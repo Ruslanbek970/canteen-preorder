@@ -72,7 +72,7 @@ export function MockPaymentPage() {
         <p className="mt-4 text-center text-xs text-slate-500">{t('payment.mockNote')}</p>
       </Card>
       <p className="mt-4 text-center">
-        <Link to={`/orders/${p.order_id}`} className="text-sm text-green-700 dark:text-green-400">
+        <Link to={`/orders/${p.order_id}`} className="text-sm text-brand-700 dark:text-brand-400">
           {t('payment.backToOrder')}
         </Link>
       </p>

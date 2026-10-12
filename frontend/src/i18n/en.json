@@ -21,7 +21,21 @@
   "home": {
     "title": "Canteen Pre-order",
     "subtitle": "Order lunch in advance, pick a time in your break and collect it by QR without queuing.",
-    "publicMenu": "View the menu without signing in"
+    "publicMenu": "View the menu without signing in",
+    "steps": {
+      "order": {
+        "title": "Order ahead",
+        "text": "Pick dishes from the menu before the break, skip the till queue."
+      },
+      "slot": {
+        "title": "Choose a time",
+        "text": "Pickup slots fit your break between classes."
+      },
+      "pickup": {
+        "title": "Pick up by QR",
+        "text": "Show the QR code or say your order number at pickup."
+      }
+    }
   },
   "roles": {
     "student": "Student",

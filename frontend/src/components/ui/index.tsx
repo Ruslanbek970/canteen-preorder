@@ -12,10 +12,11 @@ type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'bg-green-700 text-white hover:bg-green-800 disabled:bg-green-300 disabled:text-green-900',
+    'bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800 disabled:bg-brand-200 disabled:text-brand-900 disabled:shadow-none',
   secondary:
-    'border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
-  danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300',
+    'border border-brand-200 bg-white text-brand-700 hover:border-brand-300 hover:bg-brand-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-brand-200 dark:hover:bg-slate-800',
+  danger:
+    'border-2 border-red-700 bg-white text-red-700 hover:bg-red-50 disabled:opacity-50 dark:border-red-400 dark:bg-transparent dark:text-red-300 dark:hover:bg-red-950',
   ghost: 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800',
 };
 
@@ -28,7 +29,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );
@@ -56,7 +57,7 @@ export function Field({
 }
 
 const INPUT =
-  'block rounded-lg border border-slate-300 bg-white px-3 py-2 text-base focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 dark:border-slate-700 dark:bg-slate-900';
+  'block rounded-lg border border-slate-300 bg-white px-3 py-2 text-base focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30 dark:border-slate-700 dark:bg-slate-900';
 
 const widthOf = (className: string) => (/(^|\s)w-/.test(className) ? '' : 'w-full');
 
@@ -71,7 +72,7 @@ export function Select({ className = '', ...props }: SelectHTMLAttributes<HTMLSe
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+      className={`rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04)] dark:border-slate-800 dark:bg-slate-900 ${className}`}
     >
       {children}
     </div>
@@ -81,7 +82,7 @@ export function Card({ className = '', children }: { className?: string; childre
 export function Spinner() {
   return (
     <span
-      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600"
+      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-600"
       aria-hidden
     />
   );
@@ -147,7 +148,9 @@ export function Alert({
 export function PageTitle({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-      <h1 className="text-2xl font-semibold">{children}</h1>
+      <h1 className="border-l-4 border-brand-600 pl-3 text-2xl font-bold tracking-tight">
+        {children}
+      </h1>
       {actions}
     </div>
   );

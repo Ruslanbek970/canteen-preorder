@@ -3,11 +3,28 @@
 @tailwind utilities;
 
 body {
-  @apply bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
 }
 
 /* A visible keyboard focus everywhere (SPEC 11); mouse clicks keep the clean look. */
 :focus-visible {
-  outline: 2px solid theme('colors.green.600');
+  outline: 2px solid theme('colors.brand.600');
   outline-offset: 2px;
+}
+
+/* On the red header the red outline would vanish, so it turns white there. */
+.on-brand :focus-visible {
+  outline-color: theme('colors.white');
+}
+
+@media (prefers-color-scheme: dark) {
+  :focus-visible {
+    outline-color: theme('colors.brand.300');
+  }
+}
+
+@media print {
+  body {
+    @apply bg-white;
+  }
 }

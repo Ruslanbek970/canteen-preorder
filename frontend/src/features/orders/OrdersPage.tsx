@@ -23,7 +23,7 @@ export function OrdersPage() {
       ) : orders.data.items.length === 0 ? (
         <EmptyState>
           {t('orders.empty')}{' '}
-          <Link to="/menu" className="text-green-700 underline dark:text-green-400">
+          <Link to="/menu" className="text-brand-700 underline dark:text-brand-400">
             {t('cart.toMenu')}
           </Link>
         </EmptyState>
@@ -54,7 +54,7 @@ export function OrdersPage() {
                   {order.review_until && order.items.some((i) => i.my_rating === null) && (
                     <Link
                       to={`/orders/${order.id}`}
-                      className="inline-flex min-h-[44px] items-center rounded-lg px-4 font-medium text-green-700 hover:bg-green-50"
+                      className="inline-flex min-h-[44px] items-center rounded-lg px-4 font-medium text-brand-700 hover:bg-brand-50"
                     >
                       {t('reviews.rate')}
                     </Link>

@@ -42,7 +42,7 @@ export function CartPage() {
         <PageTitle>{t('cart.title')}</PageTitle>
         <EmptyState>
           {t('cart.empty')}{' '}
-          <Link to="/menu" className="text-green-700 underline dark:text-green-400">
+          <Link to="/menu" className="text-brand-700 underline dark:text-brand-400">
             {t('cart.toMenu')}
           </Link>
         </EmptyState>

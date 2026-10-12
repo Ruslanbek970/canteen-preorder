@@ -181,14 +181,14 @@ function OrderCard({
       aria-label={order.order_number}
       className={`rounded-xl border bg-white p-3 shadow-sm dark:bg-slate-900 ${
         isNew && order.status === 'paid'
-          ? 'border-green-500 ring-2 ring-green-300'
+          ? 'border-brand-500 ring-2 ring-brand-300'
           : 'border-slate-200 dark:border-slate-800'
       }`}
     >
       <div className="flex items-start justify-between gap-2">
         <span className="text-3xl font-bold">{order.order_number}</span>
         {order.pickup_shelf !== null && (
-          <span className="rounded-lg bg-green-700 px-2 py-1 font-semibold text-white">
+          <span className="rounded-lg bg-brand-700 px-2 py-1 font-semibold text-white">
             {t('kitchen.shelf', { shelf: order.pickup_shelf })}
           </span>
         )}
@@ -201,7 +201,7 @@ function OrderCard({
         ))}
       </ul>
       {order.allergy_flag && (
-        <p className="mt-2 rounded bg-red-600 px-2 py-1 font-bold text-white">
+        <p className="mt-2 rounded-lg border-2 border-amber-600 bg-amber-300 px-2 py-1 font-bold text-amber-950">
           {order.allergy_flag}
         </p>
       )}
