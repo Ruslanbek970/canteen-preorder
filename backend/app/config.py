@@ -1,6 +1,9 @@
+from datetime import date
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEV_JWT_SECRET = "dev-insecure-jwt-secret-change-me"
 
 
 class Settings(BaseSettings):
@@ -26,18 +29,51 @@ class Settings(BaseSettings):
     smtp_from: str = "noreply@canteen.local"
 
     telegram_bot_token: str = ""
+    telegram_bot_username: str = ""
     vapid_public_key: str = ""
     vapid_private_key: str = ""
+    vapid_subject: str = "mailto:admin@canteen.local"
 
     payment_provider: str = "mock"
     unpaid_order_timeout_minutes: int = 10
     no_show_after_minutes: int = 30
+    paid_cancel_before_slot_minutes: int = 30
+    verification_code_minutes: int = 30
+
+    # Rate limits (SPEC 12); switched off in tests that hammer endpoints.
+    rate_limit_enabled: bool = True
+    login_attempts_per_minute: int = 5
+    orders_per_minute: int = 10
+
+    # Dev convenience: run migrations and load demo data on first start of an empty database.
+    auto_seed: bool = False
+
+    # Forecast features (SPEC 7.13): semester start and holiday / exam-session dates.
+    semester_start: date = date(2026, 9, 1)
+    holidays: str = ""
 
     sentry_dsn: str = ""
+    log_json: bool = True
 
     @property
     def cors_origins(self) -> list[str]:
         return [self.frontend_url]
+
+    @property
+    def email_domains(self) -> set[str]:
+        return {d.strip().lower() for d in self.allowed_email_domains.split(",") if d.strip()}
+
+    @property
+    def jwt_key(self) -> str:
+        if self.jwt_secret:
+            return self.jwt_secret
+        if self.app_env == "prod":
+            raise RuntimeError("JWT_SECRET must be set in production")
+        return DEV_JWT_SECRET
+
+    @property
+    def holiday_dates(self) -> set[date]:
+        return {date.fromisoformat(d.strip()) for d in self.holidays.split(",") if d.strip()}
 
 
 @lru_cache
