@@ -1,0 +1,34 @@
+{
+  "app": {
+    "name": "Canteen Pre-order",
+    "comingSoon": "This screen arrives in a later phase."
+  },
+  "nav": {
+    "home": "Home",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Canteen Pre-order",
+    "subtitle": "App skeleton. Pick a section:"
+  },
+  "roles": {
+    "student": "Student",
+    "kitchen": "Kitchen",
+    "cashier": "Cashier",
+    "manager": "Manager",
+    "admin": "Admin"
+  },
+  "pages": {
+    "login": "Sign in",
+    "menu": "Menu",
+    "orders": "My orders",
+    "profile": "Profile",
+    "kitchen": "Kitchen board",
+    "pickup": "Order pickup",
+    "pos": "Point of sale",
+    "managerDashboard": "Manager dashboard",
+    "admin": "Administration",
+    "publicCanteen": "Canteen menu",
+    "notFound": "Page not found"
+  }
+}
