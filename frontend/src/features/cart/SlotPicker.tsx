@@ -43,12 +43,12 @@ export function SlotPicker({
                 onClick={() => onChange(slot.id)}
                 className={`flex min-h-[56px] flex-col items-center justify-center rounded-lg border px-1 py-2 text-sm ${
                   selected
-                    ? 'border-green-700 bg-green-700 text-white'
+                    ? 'border-brand-700 bg-brand-700 text-white'
                     : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900'
                 }`}
               >
                 <span className="font-semibold">{formatClock(slot.starts_at)}</span>
-                <span className={`text-xs ${selected ? 'text-green-50' : 'text-slate-500'}`}>
+                <span className={`text-xs ${selected ? 'text-brand-50' : 'text-slate-500'}`}>
                   {t('slots.free', { count: slot.free })}
                 </span>
                 {slot.discount_percent ? <Badge tone="red">−{slot.discount_percent}%</Badge> : null}

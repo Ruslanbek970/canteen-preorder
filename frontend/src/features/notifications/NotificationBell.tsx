@@ -11,7 +11,7 @@ export function NotificationBell() {
   return (
     <Link
       to="/notifications"
-      className="relative rounded p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+      className="relative rounded-lg p-2 text-white hover:bg-white/15"
       aria-label={
         unread > 0 ? t('notifications.bellUnread', { count: unread }) : t('notifications.title')
       }
@@ -27,7 +27,7 @@ export function NotificationBell() {
         <path d="M13.7 21a2 2 0 0 1-3.4 0" />
       </svg>
       {unread > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-xs font-medium text-white">
+        <span className="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-white px-1 text-center text-xs font-bold text-brand-700 ring-2 ring-brand-600">
           {unread > 99 ? '99+' : unread}
         </span>
       )}

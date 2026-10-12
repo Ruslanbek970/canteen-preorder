@@ -122,7 +122,7 @@ function PromotionCard({ promo }: { promo: Promotion }) {
     <li>
       <Card className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xl font-semibold text-green-700 dark:text-green-400">
+          <span className="text-xl font-semibold text-brand-700 dark:text-brand-400">
             −{promo.discount_percent}%
           </span>
           <span className="font-medium">{what}</span>

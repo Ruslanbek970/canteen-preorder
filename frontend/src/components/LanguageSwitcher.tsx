@@ -9,7 +9,7 @@ export function LanguageSwitcher() {
       <span className="sr-only">{t('nav.language')}</span>
       <select
         aria-label={t('nav.language')}
-        className="rounded border border-slate-300 bg-transparent px-2 py-1 dark:border-slate-700"
+        className="rounded-lg border border-white/40 bg-transparent px-2 py-1 font-medium text-white hover:bg-white/10 [&>option]:text-slate-900"
         value={i18n.resolvedLanguage}
         onChange={(e) => void i18n.changeLanguage(e.target.value)}
       >

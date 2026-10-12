@@ -94,7 +94,9 @@ export function ReportsPage() {
                 aria-pressed={active}
                 onClick={() => setPeriod(preset)}
                 className={`rounded-lg px-3 py-1.5 text-sm ${
-                  active ? 'bg-slate-800 text-white' : 'bg-slate-100 dark:bg-slate-800'
+                  active
+                    ? 'bg-brand-600 font-medium text-white shadow-sm'
+                    : 'border border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'
                 }`}
               >
                 {t('manager.reports.days', { count: days })}
@@ -130,7 +132,7 @@ export function ReportsPage() {
                 onClick={() => setTab(item.name)}
                 className={`whitespace-nowrap border-b-2 px-3 py-2 text-sm ${
                   tab === item.name
-                    ? 'border-green-600 font-semibold text-green-700'
+                    ? 'border-brand-600 font-semibold text-brand-700'
                     : 'border-transparent text-slate-500'
                 }`}
               >

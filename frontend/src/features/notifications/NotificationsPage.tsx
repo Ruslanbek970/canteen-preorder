@@ -63,14 +63,14 @@ function NotificationRow({ note }: { note: AppNotification }) {
         onClick={open}
         className={`w-full rounded-xl border p-3 text-left ${
           unread
-            ? 'border-green-300 bg-green-50 dark:border-green-800 dark:bg-green-950/40'
+            ? 'border-brand-300 border-l-4 border-l-brand-600 bg-white dark:border-brand-800 dark:bg-slate-900'
             : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
         }`}
       >
         <div className="flex items-start justify-between gap-2">
           <p className={unread ? 'font-semibold' : 'font-medium'}>{note.title}</p>
           {unread && (
-            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-green-700">
+            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-700">
               <span className="sr-only">{t('notifications.unread')}</span>
             </span>
           )}

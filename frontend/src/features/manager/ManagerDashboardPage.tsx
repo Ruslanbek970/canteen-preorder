@@ -16,7 +16,7 @@ export function ManagerDashboardPage() {
     <ManagerShell
       title={t('manager.dashboard.title')}
       actions={
-        <Link to="/manager/reports" className="text-sm text-green-700 underline">
+        <Link to="/manager/reports" className="text-sm text-brand-700 underline">
           {t('manager.dashboard.toReports')}
         </Link>
       }
@@ -80,7 +80,7 @@ function DashboardView({ data }: { data: Dashboard }) {
           label={t('manager.dashboard.promotions')}
           value={data.proposed_promotions}
           hint={
-            <Link to="/manager/promotions" className="text-green-700 underline dark:text-green-400">
+            <Link to="/manager/promotions" className="text-brand-700 underline dark:text-brand-400">
               {t('manager.dashboard.promotionsHint')}
             </Link>
           }
@@ -119,7 +119,7 @@ function SlotBars({ slots }: { slots: Dashboard['slots'] }) {
               ? 'bg-red-500'
               : fill >= 0.7
                 ? 'bg-amber-500'
-                : 'bg-green-700';
+                : 'bg-green-600';
           return (
             <li
               key={slot.id}

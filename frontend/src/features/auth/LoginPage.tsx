@@ -67,7 +67,7 @@ export function LoginPage() {
       </Card>
       <p className="mt-4 text-center text-sm">
         {t('auth.noAccount')}{' '}
-        <Link className="text-green-700 underline dark:text-green-400" to="/register">
+        <Link className="text-brand-700 underline dark:text-brand-400" to="/register">
           {t('auth.register')}
         </Link>
       </p>

@@ -58,7 +58,7 @@ function TelegramLink({ linked }: { linked: boolean }) {
       {error && <Alert>{errorMessage(error)}</Alert>}
       {linked ? (
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm text-green-700 dark:text-green-400">
+          <span className="text-sm text-brand-700 dark:text-brand-400">
             {t('profile.notifications.telegramLinked')}
           </span>
           <Button variant="secondary" disabled={unlink.isPending} onClick={() => unlink.mutate()}>
@@ -76,7 +76,7 @@ function TelegramLink({ linked }: { linked: boolean }) {
               href={code.deep_link}
               target="_blank"
               rel="noreferrer"
-              className="block text-center font-medium text-green-700 underline dark:text-green-400"
+              className="block text-center font-medium text-brand-700 underline dark:text-brand-400"
             >
               {t('profile.notifications.openBot', { bot: `@${code.bot_username ?? ''}` })}
             </a>

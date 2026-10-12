@@ -27,18 +27,19 @@ export function Layout() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:p-2">
         {t('nav.skipToContent')}
       </a>
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2">
-          <Link to="/" className="truncate font-semibold text-green-700 dark:text-green-400">
-            {t('app.name')}
+      <header className="on-brand sticky top-0 z-20 bg-brand-600 text-white shadow-md dark:bg-brand-800">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2.5">
+          <Link to="/" className="flex min-w-0 items-center gap-2 font-bold tracking-tight">
+            <BrandMark />
+            <span className="truncate">{t('app.name')}</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <LanguageSwitcher />
             {token && customer && <NotificationBell />}
             {token && me.data ? (
               <button
                 type="button"
-                className="rounded px-2 py-1 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="rounded-lg px-2 py-1.5 text-sm font-medium text-white hover:bg-white/15"
                 onClick={() => void logout().then(() => navigate('/login'))}
               >
                 {t('auth.logout')}
@@ -46,7 +47,7 @@ export function Layout() {
             ) : (
               <Link
                 to="/login"
-                className="rounded px-2 py-1 text-sm text-green-700 dark:text-green-400"
+                className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50"
               >
                 {t('auth.login')}
               </Link>
@@ -61,16 +62,16 @@ export function Layout() {
                   <NavLink
                     to={item.to}
                     className={({ isActive }) =>
-                      `block whitespace-nowrap border-b-2 px-3 py-2 text-sm ${
+                      `block whitespace-nowrap border-b-[3px] px-3 py-2 text-sm ${
                         isActive
-                          ? 'border-green-600 font-medium text-green-700 dark:text-green-400'
-                          : 'border-transparent text-slate-600 dark:text-slate-300'
+                          ? 'border-white font-semibold text-white'
+                          : 'border-transparent text-white hover:border-white/50'
                       }`
                     }
                   >
                     {t(item.labelKey)}
                     {item.to === '/cart' && inCart > 0 && (
-                      <span className="ml-1 rounded-full bg-green-700 px-1.5 text-xs text-white">
+                      <span className="ml-1 rounded-full bg-white px-1.5 text-xs font-bold text-brand-700">
                         {inCart}
                       </span>
                     )}
@@ -86,5 +87,31 @@ export function Layout() {
         <Outlet />
       </main>
     </div>
+  );
+}
+
+/** The app icon (plate, fork and knife) as a white badge on the red header. */
+function BrandMark() {
+  return (
+    <span
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-brand-600"
+      aria-hidden
+    >
+      <svg viewBox="0 0 512 512" className="h-6 w-6" fill="none" stroke="currentColor">
+        <circle cx="256" cy="268" r="120" strokeWidth={36} />
+        <circle cx="256" cy="268" r="56" fill="currentColor" stroke="none" />
+        <path
+          d="M112 120v84M88 120v56a24 24 0 0 0 48 0v-56M112 204v196"
+          strokeWidth={28}
+          strokeLinecap="round"
+        />
+        <path
+          d="M400 120c-28 16-32 70-32 100h32v180"
+          strokeWidth={28}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 }

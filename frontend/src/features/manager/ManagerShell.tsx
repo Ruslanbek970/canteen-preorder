@@ -34,7 +34,9 @@ export function ManagerShell({
                 end={tab.end}
                 className={({ isActive }) =>
                   `block whitespace-nowrap rounded-lg px-3 py-1.5 text-sm ${
-                    isActive ? 'bg-green-700 text-white' : 'bg-slate-100 dark:bg-slate-800'
+                    isActive
+                      ? 'bg-brand-600 font-medium text-white shadow-sm'
+                      : 'border border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'
                   }`
                 }
               >

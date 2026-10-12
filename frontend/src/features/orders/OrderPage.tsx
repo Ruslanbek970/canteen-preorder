@@ -34,7 +34,7 @@ export function OrderPage() {
 
   return (
     <section className="mx-auto max-w-xl p-4">
-      <Link to="/orders" className="text-sm text-green-700 dark:text-green-400">
+      <Link to="/orders" className="text-sm text-brand-700 dark:text-brand-400">
         ← {t('pages.orders')}
       </Link>
       <div className="mt-2 flex items-start justify-between gap-2">
@@ -69,7 +69,7 @@ export function OrderPage() {
           {o.payment_url ? (
             <Link
               to={o.payment_url}
-              className="flex min-h-[48px] w-full items-center justify-center rounded-lg bg-green-700 px-4 font-medium text-white"
+              className="flex min-h-[48px] w-full items-center justify-center rounded-lg bg-brand-700 px-4 font-medium text-white"
             >
               {t('orders.pay', { total: formatPrice(o.total) })}
             </Link>

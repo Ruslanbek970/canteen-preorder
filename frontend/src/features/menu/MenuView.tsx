@@ -42,7 +42,9 @@ export function MenuView({ canteenId, signedIn, action }: Props) {
               role="tab"
               aria-selected={menu.data.date === d}
               className={`rounded-full px-4 py-2 text-sm ${
-                menu.data.date === d ? 'bg-green-700 text-white' : 'bg-slate-100 dark:bg-slate-800'
+                menu.data.date === d
+                  ? 'bg-brand-600 font-medium text-white shadow-sm'
+                  : 'border border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'
               }`}
               onClick={() => setDate(idx === 0 ? undefined : d)}
             >
@@ -65,7 +67,7 @@ export function MenuView({ canteenId, signedIn, action }: Props) {
               aria-selected={filters.categoryId === c.id}
               className={`whitespace-nowrap rounded-lg border px-3 py-1.5 text-sm ${
                 filters.categoryId === c.id
-                  ? 'border-green-600 bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200'
+                  ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-brand-200'
                   : 'border-slate-200 dark:border-slate-700'
               }`}
               onClick={() => setFilters((f) => ({ ...f, categoryId: c.id }))}

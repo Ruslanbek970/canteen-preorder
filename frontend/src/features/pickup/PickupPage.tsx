@@ -113,7 +113,7 @@ function OrderCard({
           </div>
         </div>
         {order.pickup_shelf !== null && (
-          <div className="rounded-xl bg-green-700 px-4 py-2 text-center text-white">
+          <div className="rounded-xl bg-brand-700 px-4 py-2 text-center text-white">
             <div className="text-sm">{t('pickup.shelf')}</div>
             <div className="text-5xl font-bold" data-testid="shelf">
               {order.pickup_shelf}
@@ -130,7 +130,7 @@ function OrderCard({
       </ul>
       <p className="mt-1 text-slate-500">{formatPrice(order.total)}</p>
       {order.allergy_flag && (
-        <p className="mt-3 rounded bg-red-600 px-3 py-2 text-xl font-bold text-white">
+        <p className="mt-3 rounded-lg border-2 border-amber-600 bg-amber-300 px-3 py-2 text-xl font-bold text-amber-950">
           {order.allergy_flag}
         </p>
       )}

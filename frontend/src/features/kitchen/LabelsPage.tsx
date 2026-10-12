@@ -40,7 +40,7 @@ export function LabelsPage() {
 }`}</style>
       <div className="no-print mb-4 flex gap-2">
         <Button onClick={() => window.print()}>{t('kitchen.print')}</Button>
-        <Link to="/kitchen" className="self-center text-green-700 dark:text-green-400">
+        <Link to="/kitchen" className="self-center text-brand-700 dark:text-brand-400">
           ← {t('kitchen.tabs.board')}
         </Link>
       </div>

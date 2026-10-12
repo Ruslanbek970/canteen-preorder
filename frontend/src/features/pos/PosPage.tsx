@@ -126,7 +126,7 @@ export function PosPage() {
                   key={m}
                   className={`flex-1 cursor-pointer rounded-lg border px-3 py-2 text-center ${
                     method === m
-                      ? 'border-green-600 bg-green-50 dark:bg-green-950'
+                      ? 'border-brand-600 bg-brand-50 dark:bg-brand-950'
                       : 'border-slate-300 dark:border-slate-700'
                   }`}
                 >
