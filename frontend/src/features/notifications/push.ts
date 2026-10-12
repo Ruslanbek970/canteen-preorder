@@ -1,6 +1,6 @@
 import { ApiError, apiGet, apiPost, apiRequest } from '@/api/client';
 
-const SW_URL = '/push-sw.js';
+import { SW_URL } from '@/lib/pwa';
 
 export function pushSupported(): boolean {
   return (

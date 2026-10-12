@@ -5,25 +5,11 @@ import type { Role } from '@/api/types';
 
 import { PlaceholderPage } from '@/components/PlaceholderPage';
 import { LoadingState } from '@/components/ui';
-import { AdminBuildingsPage } from '@/features/admin/AdminBuildingsPage';
-import { AdminCanteensPage } from '@/features/admin/AdminCanteensPage';
-import { AdminGroupsPage } from '@/features/admin/AdminGroupsPage';
-import { AdminSchedulePage } from '@/features/admin/AdminSchedulePage';
-import { AdminUsersPage } from '@/features/admin/AdminUsersPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingPage } from '@/features/auth/OnboardingPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { VerifyEmailPage } from '@/features/auth/VerifyEmailPage';
-import { KitchenPage } from '@/features/kitchen/KitchenPage';
-import { KitchenWastePage } from '@/features/kitchen/KitchenWastePage';
-import { LabelsPage } from '@/features/kitchen/LabelsPage';
 import { CartPage } from '@/features/cart/CartPage';
-import { DishesPage } from '@/features/manager/DishesPage';
-import { IngredientsPage } from '@/features/manager/IngredientsPage';
-import { ManagerDashboardPage } from '@/features/manager/ManagerDashboardPage';
-import { ManagerMenuPage } from '@/features/manager/ManagerMenuPage';
-import { PromotionsPage } from '@/features/manager/PromotionsPage';
-import { ManagerSlotsPage } from '@/features/manager/ManagerSlotsPage';
 import { DishPage } from '@/features/menu/DishPage';
 import { MenuPage } from '@/features/menu/MenuPage';
 import { NotificationsPage } from '@/features/notifications/NotificationsPage';
@@ -31,8 +17,6 @@ import { PublicCanteenPage } from '@/features/menu/PublicCanteenPage';
 import { OrderPage } from '@/features/orders/OrderPage';
 import { OrdersPage } from '@/features/orders/OrdersPage';
 import { MockPaymentPage } from '@/features/payments/MockPaymentPage';
-import { PickupPage } from '@/features/pickup/PickupPage';
-import { PosPage } from '@/features/pos/PosPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
 
 import { RedirectIfSignedIn, RequireRole } from './guards';
@@ -40,13 +24,64 @@ import { HomePage } from './HomePage';
 import { Layout } from './Layout';
 import { ADMIN, CUSTOMER, KITCHEN, MANAGER, PICKUP } from './roles';
 
-// Charts are heavy: load the reports only for the people who open them.
+// Staff screens (charts, the QR scanner) are loaded only by the people who open them, so the
+// student's phone downloads just the customer part of the app.
+const AdminBuildingsPage = lazy(() =>
+  import('@/features/admin/AdminBuildingsPage').then((m) => ({ default: m.AdminBuildingsPage })),
+);
+const AdminCanteensPage = lazy(() =>
+  import('@/features/admin/AdminCanteensPage').then((m) => ({ default: m.AdminCanteensPage })),
+);
+const AdminGroupsPage = lazy(() =>
+  import('@/features/admin/AdminGroupsPage').then((m) => ({ default: m.AdminGroupsPage })),
+);
+const AdminSchedulePage = lazy(() =>
+  import('@/features/admin/AdminSchedulePage').then((m) => ({ default: m.AdminSchedulePage })),
+);
+const AdminUsersPage = lazy(() =>
+  import('@/features/admin/AdminUsersPage').then((m) => ({ default: m.AdminUsersPage })),
+);
+const KitchenPage = lazy(() =>
+  import('@/features/kitchen/KitchenPage').then((m) => ({ default: m.KitchenPage })),
+);
+const KitchenWastePage = lazy(() =>
+  import('@/features/kitchen/KitchenWastePage').then((m) => ({ default: m.KitchenWastePage })),
+);
+const LabelsPage = lazy(() =>
+  import('@/features/kitchen/LabelsPage').then((m) => ({ default: m.LabelsPage })),
+);
+const DishesPage = lazy(() =>
+  import('@/features/manager/DishesPage').then((m) => ({ default: m.DishesPage })),
+);
+const IngredientsPage = lazy(() =>
+  import('@/features/manager/IngredientsPage').then((m) => ({ default: m.IngredientsPage })),
+);
+const ManagerDashboardPage = lazy(() =>
+  import('@/features/manager/ManagerDashboardPage').then((m) => ({
+    default: m.ManagerDashboardPage,
+  })),
+);
+const ManagerMenuPage = lazy(() =>
+  import('@/features/manager/ManagerMenuPage').then((m) => ({ default: m.ManagerMenuPage })),
+);
+const PromotionsPage = lazy(() =>
+  import('@/features/manager/PromotionsPage').then((m) => ({ default: m.PromotionsPage })),
+);
+const ManagerSlotsPage = lazy(() =>
+  import('@/features/manager/ManagerSlotsPage').then((m) => ({ default: m.ManagerSlotsPage })),
+);
+const PickupPage = lazy(() =>
+  import('@/features/pickup/PickupPage').then((m) => ({ default: m.PickupPage })),
+);
+const PosPage = lazy(() => import('@/features/pos/PosPage').then((m) => ({ default: m.PosPage })));
 const ReportsPage = lazy(() =>
   import('@/features/manager/ReportsPage').then((m) => ({ default: m.ReportsPage })),
 );
 
 const guard = (element: ReactElement, roles?: Role[]) => (
-  <RequireRole roles={roles}>{element}</RequireRole>
+  <RequireRole roles={roles}>
+    <Suspense fallback={<LoadingState />}>{element}</Suspense>
+  </RequireRole>
 );
 
 export const routes: RouteObject[] = [
@@ -93,12 +128,7 @@ export const routes: RouteObject[] = [
       { path: 'manager', element: guard(<ManagerDashboardPage />, MANAGER) },
       {
         path: 'manager/reports',
-        element: guard(
-          <Suspense fallback={<LoadingState />}>
-            <ReportsPage />
-          </Suspense>,
-          MANAGER,
-        ),
+        element: guard(<ReportsPage />, MANAGER),
       },
       { path: 'manager/promotions', element: guard(<PromotionsPage />, MANAGER) },
       { path: 'manager/menu', element: guard(<ManagerMenuPage />, MANAGER) },

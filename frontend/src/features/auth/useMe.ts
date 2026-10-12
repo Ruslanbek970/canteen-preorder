@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { apiGet, apiPost } from '@/api/client';
 import type { Me, Role, TokenPair } from '@/api/types';
 import i18n from '@/i18n';
+import { clearPersonalCache } from '@/lib/pwa';
 
 import { useAuthStore } from './store';
 
@@ -63,5 +64,6 @@ export function useLogout() {
     }
     clear();
     queryClient.clear();
+    await clearPersonalCache();
   }, [queryClient]);
 }

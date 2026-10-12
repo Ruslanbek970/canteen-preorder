@@ -16,6 +16,11 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+psycopg://canteen:canteen@db:5432/canteen"
     redis_url: str = "redis://redis:6379/0"
+    # Connections per API process. Sync endpoints run in a thread pool that is capped to the same
+    # number (app.main), so a request never waits for a connection while holding a thread that
+    # another request needs to give its connection back. Processes x total < max_connections.
+    db_pool_size: int = 10
+    db_max_overflow: int = 10
 
     jwt_secret: str = ""
     access_token_minutes: int = 15

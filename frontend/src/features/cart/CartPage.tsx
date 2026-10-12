@@ -18,6 +18,7 @@ import { useMe } from '@/features/auth/useMe';
 import { useCreateOrder, useSlots } from '@/features/orders/api';
 import { formatDay, formatPrice, todayLocal } from '@/lib/format';
 import { dishName } from '@/lib/names';
+import { useOnline } from '@/lib/pwa';
 
 import { SlotPicker } from './SlotPicker';
 import { MAX_QUANTITY, useCartStore } from './store';
@@ -31,6 +32,7 @@ export function CartPage() {
   const { canteenId, date, slotId, lines, setQuantity, setSlot, clear } = useCartStore();
   const slots = useSlots(canteenId, date);
   const create = useCreateOrder();
+  const online = useOnline();
   const [ack, setAck] = useState(false);
   const skipped = (useLocation().state as { skipped?: RepeatResponse['skipped'] } | null)?.skipped;
 
@@ -52,7 +54,11 @@ export function CartPage() {
   const totals = cartTotals(lines, slot?.discount_percent ?? null);
   const needsAck = lines.some((l) => l.warning);
   const canSubmit =
-    Boolean(slot) && (!needsAck || ack) && Boolean(me.data?.email_verified) && !create.isPending;
+    online &&
+    Boolean(slot) &&
+    (!needsAck || ack) &&
+    Boolean(me.data?.email_verified) &&
+    !create.isPending;
 
   const submit = () => {
     if (!slot) return;
@@ -192,9 +198,11 @@ export function CartPage() {
       <Button className="w-full" disabled={!canSubmit} onClick={submit}>
         {create.isPending
           ? t('cart.placing')
-          : slot
-            ? t('cart.place', { total: formatPrice(totals.total) })
-            : t('cart.chooseSlot')}
+          : !online
+            ? t('pwa.offlineShort')
+            : slot
+              ? t('cart.place', { total: formatPrice(totals.total) })
+              : t('cart.chooseSlot')}
       </Button>
     </section>
   );

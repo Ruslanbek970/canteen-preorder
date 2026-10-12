@@ -113,7 +113,7 @@ function OrderCard({
           </div>
         </div>
         {order.pickup_shelf !== null && (
-          <div className="rounded-xl bg-green-600 px-4 py-2 text-center text-white">
+          <div className="rounded-xl bg-green-700 px-4 py-2 text-center text-white">
             <div className="text-sm">{t('pickup.shelf')}</div>
             <div className="text-5xl font-bold" data-testid="shelf">
               {order.pickup_shelf}

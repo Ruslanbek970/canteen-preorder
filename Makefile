@@ -42,5 +42,7 @@ format:
 e2e: ## Playwright end-to-end test (needs `make dev` running)
 	cd frontend && npm run e2e
 
-load-test:
-	@echo "k6 load test is added in phase 11 (SPEC 13)."
+load-test: ## k6 order rush: 500 students, 6 slots x 30 places (docs/load-test.md)
+	$(BACKEND) python -m scripts.load_setup
+	$(COMPOSE) --profile load run --rm k6
+	$(BACKEND) python -m scripts.load_check

@@ -19,7 +19,7 @@ export function PickupShell({ children }: { children: ReactNode }) {
                 to={tab.to}
                 className={({ isActive }) =>
                   `block rounded-lg px-4 py-2 ${
-                    isActive ? 'bg-green-600 text-white' : 'bg-slate-100 dark:bg-slate-800'
+                    isActive ? 'bg-green-700 text-white' : 'bg-slate-100 dark:bg-slate-800'
                   }`
                 }
               >

@@ -70,7 +70,7 @@ function NotificationRow({ note }: { note: AppNotification }) {
         <div className="flex items-start justify-between gap-2">
           <p className={unread ? 'font-semibold' : 'font-medium'}>{note.title}</p>
           {unread && (
-            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-green-600">
+            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-green-700">
               <span className="sr-only">{t('notifications.unread')}</span>
             </span>
           )}

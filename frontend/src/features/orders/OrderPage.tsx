@@ -69,7 +69,7 @@ export function OrderPage() {
           {o.payment_url ? (
             <Link
               to={o.payment_url}
-              className="flex min-h-[48px] w-full items-center justify-center rounded-lg bg-green-600 px-4 font-medium text-white"
+              className="flex min-h-[48px] w-full items-center justify-center rounded-lg bg-green-700 px-4 font-medium text-white"
             >
               {t('orders.pay', { total: formatPrice(o.total) })}
             </Link>
@@ -104,7 +104,7 @@ export function OrderPage() {
               </span>
               <span className="text-right">
                 {Number(item.discount_amount) > 0 && (
-                  <span className="mr-2 text-sm text-slate-400 line-through">
+                  <span className="mr-2 text-sm text-slate-500 line-through">
                     {formatPrice(Number(item.unit_price) * item.quantity)}
                   </span>
                 )}

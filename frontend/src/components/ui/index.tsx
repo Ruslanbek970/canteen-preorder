@@ -11,7 +11,8 @@ import { useErrorMessage } from './errors';
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-green-600 text-white hover:bg-green-700 disabled:bg-green-300',
+  primary:
+    'bg-green-700 text-white hover:bg-green-800 disabled:bg-green-300 disabled:text-green-900',
   secondary:
     'border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
   danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300',

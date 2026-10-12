@@ -119,7 +119,7 @@ function SlotBars({ slots }: { slots: Dashboard['slots'] }) {
               ? 'bg-red-500'
               : fill >= 0.7
                 ? 'bg-amber-500'
-                : 'bg-green-600';
+                : 'bg-green-700';
           return (
             <li
               key={slot.id}

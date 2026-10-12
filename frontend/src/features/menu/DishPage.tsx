@@ -108,7 +108,13 @@ export function DishPage() {
           <ul className="space-y-2">
             {d.reviews.map((r, idx) => (
               <li key={idx} className="text-sm">
-                <span className="text-amber-600">{'★'.repeat(r.rating)}</span>
+                <span
+                  className="text-amber-700"
+                  role="img"
+                  aria-label={t('menu.stars', { count: r.rating })}
+                >
+                  {'★'.repeat(r.rating)}
+                </span>
                 {r.comment && <span className="ml-2">{r.comment}</span>}
               </li>
             ))}

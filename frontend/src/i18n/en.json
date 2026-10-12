@@ -218,7 +218,8 @@
     "ingredients": "Ingredients",
     "noAllergens": "none",
     "reviews": "Reviews",
-    "noReviews": "No reviews yet"
+    "noReviews": "No reviews yet",
+    "stars": "Rated {{count}} out of 5"
   },
   "manager": {
     "section": "Manager sections",
@@ -683,5 +684,9 @@
         "encoding": "Save the file as UTF-8."
       }
     }
+  },
+  "pwa": {
+    "offline": "You are offline. Showing the last saved menu; ordering is unavailable.",
+    "offlineShort": "Offline"
   }
 }

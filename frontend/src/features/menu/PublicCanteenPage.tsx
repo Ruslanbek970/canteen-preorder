@@ -28,7 +28,7 @@ export function PublicCanteenPage() {
           <Link
             to={signedIn ? '/menu' : '/login'}
             state={{ from: '/menu' }}
-            className="rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
+            className="rounded-lg bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800"
           >
             {signedIn ? t('menu.goOrder') : t('menu.loginToOrder')}
           </Link>

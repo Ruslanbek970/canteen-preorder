@@ -22,6 +22,11 @@ frontend/coverage/
 frontend/playwright-report/
 frontend/test-results/
 
+# load test output
+backend/load_users.json
+infra/k6/out/
+dump.rdb
+
 # misc
 .DS_Store
 .idea/

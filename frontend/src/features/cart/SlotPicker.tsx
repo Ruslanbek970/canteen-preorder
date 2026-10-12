@@ -43,7 +43,7 @@ export function SlotPicker({
                 onClick={() => onChange(slot.id)}
                 className={`flex min-h-[56px] flex-col items-center justify-center rounded-lg border px-1 py-2 text-sm ${
                   selected
-                    ? 'border-green-600 bg-green-600 text-white'
+                    ? 'border-green-700 bg-green-700 text-white'
                     : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900'
                 }`}
               >

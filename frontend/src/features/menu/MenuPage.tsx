@@ -63,7 +63,7 @@ export function MenuPage() {
         <div className="sticky bottom-0 -mx-4 mt-4 border-t border-slate-200 bg-white/95 p-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
           <Link
             to="/cart"
-            className="flex min-h-[48px] items-center justify-between rounded-lg bg-green-600 px-4 font-medium text-white"
+            className="flex min-h-[48px] items-center justify-between rounded-lg bg-green-700 px-4 font-medium text-white"
           >
             <span>{t('cart.openWith', { count: cartCount(lines) })}</span>
             <span>{formatPrice(cartTotals(lines).total)}</span>

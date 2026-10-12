@@ -29,7 +29,7 @@ export function DishCard({ item, action }: { item: MenuItem; action?: ReactNode 
         <div className="text-right">
           {item.discount_percent ? (
             <>
-              <div className="text-sm text-slate-400 line-through">{formatPrice(item.price)}</div>
+              <div className="text-sm text-slate-500 line-through">{formatPrice(item.price)}</div>
               <div className="font-semibold text-red-600">{formatPrice(item.price_now)}</div>
             </>
           ) : (

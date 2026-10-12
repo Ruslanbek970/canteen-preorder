@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { OfflineBanner } from '@/components/OfflineBanner';
 import { useAuthStore } from '@/features/auth/store';
 import { useLogout, useMe } from '@/features/auth/useMe';
 import { cartCount, useCartStore } from '@/features/cart/store';
@@ -69,7 +70,7 @@ export function Layout() {
                   >
                     {t(item.labelKey)}
                     {item.to === '/cart' && inCart > 0 && (
-                      <span className="ml-1 rounded-full bg-green-600 px-1.5 text-xs text-white">
+                      <span className="ml-1 rounded-full bg-green-700 px-1.5 text-xs text-white">
                         {inCart}
                       </span>
                     )}
@@ -79,6 +80,7 @@ export function Layout() {
             </ul>
           </nav>
         )}
+        <OfflineBanner />
       </header>
       <main id="main" className="mx-auto w-full max-w-6xl flex-1">
         <Outlet />

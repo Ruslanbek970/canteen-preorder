@@ -188,7 +188,7 @@ function OrderCard({
       <div className="flex items-start justify-between gap-2">
         <span className="text-3xl font-bold">{order.order_number}</span>
         {order.pickup_shelf !== null && (
-          <span className="rounded-lg bg-green-600 px-2 py-1 font-semibold text-white">
+          <span className="rounded-lg bg-green-700 px-2 py-1 font-semibold text-white">
             {t('kitchen.shelf', { shelf: order.pickup_shelf })}
           </span>
         )}

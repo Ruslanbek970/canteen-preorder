@@ -10,7 +10,7 @@ export function HomePage() {
       <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
         <Link
           to="/login"
-          className="rounded-lg bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700"
+          className="rounded-lg bg-green-700 px-5 py-3 font-medium text-white hover:bg-green-800"
         >
           {t('auth.login')}
         </Link>

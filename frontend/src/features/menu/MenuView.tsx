@@ -42,7 +42,7 @@ export function MenuView({ canteenId, signedIn, action }: Props) {
               role="tab"
               aria-selected={menu.data.date === d}
               className={`rounded-full px-4 py-2 text-sm ${
-                menu.data.date === d ? 'bg-green-600 text-white' : 'bg-slate-100 dark:bg-slate-800'
+                menu.data.date === d ? 'bg-green-700 text-white' : 'bg-slate-100 dark:bg-slate-800'
               }`}
               onClick={() => setDate(idx === 0 ? undefined : d)}
             >
