@@ -42,6 +42,8 @@ class PickupSlot(Base):
     ends_at: Mapped[time] = mapped_column(sa.Time, nullable=False)
     capacity: Mapped[int] = mapped_column(sa.SmallInteger, nullable=False)
     booked_count: Mapped[int] = mapped_column(sa.SmallInteger, nullable=False, server_default="0")
+    # Added by migration 3: the manager can close a slot (SPEC 7.4).
+    is_closed: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, server_default=sa.false())
 
 
 class Promotion(Base):

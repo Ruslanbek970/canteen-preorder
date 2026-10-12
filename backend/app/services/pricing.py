@@ -23,9 +23,10 @@ def discounted(price: Decimal, percent: int | None) -> Decimal:
 
 
 def line_discount(unit_price: Decimal, quantity: int, percent: int | None) -> Decimal:
+    """Per-unit rounding, so the line equals `price_now x quantity` shown in the menu."""
     if not percent:
         return Decimal("0")
-    return round_tenge(unit_price * quantity * percent / 100)
+    return (round_tenge(unit_price) - discounted(unit_price, percent)) * quantity
 
 
 def _active(at: datetime):

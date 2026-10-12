@@ -7,7 +7,7 @@ import logging
 from datetime import date, time, timedelta
 from decimal import Decimal
 
-from sqlalchemy import text
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.db import SessionLocal
@@ -30,6 +30,7 @@ from app.models import (
     UserRole,
 )
 from app.security import hash_password
+from app.services import slots
 from app.utils import time as clock
 
 log = logging.getLogger(__name__)
@@ -357,6 +358,45 @@ def run(db: Session) -> None:
     for day in (today, today + timedelta(days=1)):
         seed_menu(db, canteen, food["dishes"], day)  # type: ignore[arg-type]
     db.commit()
+    slots.generate_for_active(db)
+
+
+def ensure_demo_menu(db: Session) -> int:
+    """Dev only: copy the latest menu to today/tomorrow so the demo never shows an empty day."""
+    today = clock.today_local()
+    created = 0
+    for canteen in db.scalars(select(Canteen).where(Canteen.is_active)).all():
+        latest = db.scalar(
+            select(func.max(MenuItem.menu_date)).where(MenuItem.canteen_id == canteen.id)
+        )
+        if latest is None:
+            continue
+        source = db.scalars(
+            select(MenuItem).where(MenuItem.canteen_id == canteen.id, MenuItem.menu_date == latest)
+        ).all()
+        for day in (today, today + timedelta(days=1)):
+            exists = db.scalar(
+                select(func.count(MenuItem.id)).where(
+                    MenuItem.canteen_id == canteen.id, MenuItem.menu_date == day
+                )
+            )
+            if exists:
+                continue
+            for mi in source:
+                db.add(
+                    MenuItem(
+                        canteen_id=canteen.id,
+                        dish_id=mi.dish_id,
+                        menu_date=day,
+                        price=mi.price,
+                        planned_portions=mi.planned_portions,
+                        available_portions=mi.planned_portions,
+                        cooked_at=clock.combine_local(day, _t("08:30")),
+                    )
+                )
+                created += 1
+    db.commit()
+    return created
 
 
 def main() -> None:

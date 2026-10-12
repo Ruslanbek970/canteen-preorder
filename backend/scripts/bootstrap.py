@@ -12,6 +12,7 @@ from sqlalchemy import func, select
 from app.config import get_settings
 from app.db import SessionLocal
 from app.models import User
+from app.services import slots
 
 log = logging.getLogger("bootstrap")
 
@@ -26,16 +27,21 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     migrate()
     log.info("migrations applied")
-    if not get_settings().auto_seed:
-        return
-    with SessionLocal() as db:
-        has_users = db.scalar(select(func.count(User.id))) or 0
-    if has_users:
-        log.info("database already has data, demo seed skipped")
-        return
-    from scripts import seed
+    if get_settings().auto_seed:
+        from scripts import seed
 
-    seed.main()
+        with SessionLocal() as db:
+            has_users = db.scalar(select(func.count(User.id))) or 0
+        if has_users:
+            with SessionLocal() as db:
+                added = seed.ensure_demo_menu(db)
+            log.info("demo seed skipped (data exists), %s demo menu items added", added)
+        else:
+            seed.main()
+    # The worker regenerates slots daily at 05:00; this covers a fresh start.
+    with SessionLocal() as db:
+        created = slots.generate_for_active(db)
+    log.info("pickup slots ensured for today and tomorrow (%s new)", created)
 
 
 if __name__ == "__main__":
