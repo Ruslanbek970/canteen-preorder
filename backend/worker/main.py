@@ -16,6 +16,14 @@ def build_scheduler() -> BlockingScheduler:
     scheduler.add_job(jobs.generate_slots, CronTrigger(hour=5, minute=0, timezone=tz))
     scheduler.add_job(jobs.expire_unpaid_orders, IntervalTrigger(minutes=1))
     scheduler.add_job(jobs.mark_no_show, IntervalTrigger(minutes=5))
+    scheduler.add_job(jobs.slot_reminders, IntervalTrigger(minutes=1))
+    # «каждые 30 минут с 13:30 до закрытия»: the job itself skips before 13:30 and after closing.
+    scheduler.add_job(
+        jobs.propose_leftover_discounts, CronTrigger(hour="13-22", minute="0,30", timezone=tz)
+    )
+    scheduler.add_job(jobs.suggest_off_peak, CronTrigger(minute="0,30", timezone=tz))
+    scheduler.add_job(jobs.expire_promotions, IntervalTrigger(minutes=10))
+    scheduler.add_job(jobs.deliver_push, IntervalTrigger(seconds=15))
     return scheduler
 
 

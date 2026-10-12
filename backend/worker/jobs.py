@@ -8,7 +8,9 @@ from functools import wraps
 from typing import Any
 
 from app.db import SessionLocal
-from app.services import orders, pickup, slots
+from app.notifications import push
+from app.notifications import service as notifications
+from app.services import orders, pickup, promotions, slots
 
 log = logging.getLogger("worker")
 
@@ -43,3 +45,28 @@ def expire_unpaid_orders(db) -> int:
 @job
 def mark_no_show(db) -> int:
     return pickup.mark_no_show(db)
+
+
+@job
+def slot_reminders(db) -> int:
+    return notifications.slot_reminders(db)
+
+
+@job
+def propose_leftover_discounts(db) -> int:
+    return promotions.propose_leftover(db)
+
+
+@job
+def suggest_off_peak(db) -> int:
+    return promotions.suggest_off_peak(db)
+
+
+@job
+def expire_promotions(db) -> int:
+    return promotions.expire_promotions(db)
+
+
+@job
+def deliver_push(db) -> int:
+    return push.deliver_queued(db)

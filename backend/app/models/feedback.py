@@ -21,6 +21,14 @@ class Notification(Base):
         sa.Index(
             "idx_notifications_unread", "user_id", postgresql_where=sa.text("read_at IS NULL")
         ),
+        sa.Index("idx_notifications_user_sent", "user_id", sa.text("sent_at DESC")),
+        sa.Index(
+            "uq_notifications_order_kind",
+            "order_id",
+            "kind",
+            unique=True,
+            postgresql_where=sa.text("order_id IS NOT NULL AND kind IS NOT NULL"),
+        ),
     )
 
     id: Mapped[int] = bigint_pk()
@@ -30,6 +38,7 @@ class Notification(Base):
     order_id: Mapped[int | None] = mapped_column(sa.ForeignKey("orders.id"))
     promotion_id: Mapped[int | None] = mapped_column(sa.ForeignKey("promotions.id"))
     channel: Mapped[NotificationChannel] = mapped_column(notification_channel, nullable=False)
+    kind: Mapped[str | None] = mapped_column(sa.String(30))
     title: Mapped[str] = mapped_column(sa.String(120), nullable=False)
     body: Mapped[str] = mapped_column(sa.Text, nullable=False)
     sent_at: Mapped[datetime] = mapped_column(

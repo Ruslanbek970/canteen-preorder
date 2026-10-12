@@ -481,3 +481,52 @@ export interface RatingsReport extends ReportBase {
 }
 
 export type ReportName = 'sales' | 'waste' | 'peak-hours' | 'ratings';
+
+// ---- phase 8: notifications and discounts -------------------------------------------------
+
+export interface AppNotification {
+  id: number;
+  kind: string | null;
+  title: string;
+  body: string;
+  order_id: number | null;
+  promotion_id: number | null;
+  sent_at: string;
+  read_at: string | null;
+}
+
+export interface NotificationList {
+  items: AppNotification[];
+  unread: number;
+}
+
+export interface TelegramLinkCode {
+  code: string;
+  expires_in: number;
+  bot_username: string | null;
+  deep_link: string | null;
+}
+
+export type PromotionType = 'leftover' | 'off_peak' | 'loyalty';
+export type PromotionStatus = 'proposed' | 'active' | 'rejected' | 'expired';
+
+export interface Promotion {
+  id: number;
+  type: PromotionType;
+  status: PromotionStatus;
+  discount_percent: number;
+  valid_from: string;
+  valid_to: string;
+  created_by_system: boolean;
+  created_at: string;
+  menu_item_id: number | null;
+  dish_name: string | null;
+  available_portions: number | null;
+  planned_portions: number | null;
+  pickup_slot_id: number | null;
+  slot_date: string | null;
+  slot_starts_at: string | null;
+  slot_ends_at: string | null;
+  slot_booked: number | null;
+  slot_capacity: number | null;
+}

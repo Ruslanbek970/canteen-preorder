@@ -13,10 +13,15 @@ from app.redis_client import get_redis
 log = logging.getLogger(__name__)
 
 _KEY = "pending_events"
+_OUTBOX = "pending_outbox"
 
 
 def user_channel(user_id: int) -> str:
     return f"ws:user:{user_id}"
+
+
+def notification_channel(user_id: int) -> str:
+    return f"ws:notify:{user_id}"
 
 
 def kitchen_channel(canteen_id: int) -> str:
@@ -34,15 +39,26 @@ def publish(channel: str, message: dict[str, Any]) -> None:
         log.warning("could not publish %s", message.get("type"), exc_info=True)
 
 
+def enqueue(db: Session, queue: str, payload: dict[str, Any]) -> None:
+    """A job for another process (the bot, the worker), handed over only after commit."""
+    db.info.setdefault(_OUTBOX, []).append((queue, payload))
+
+
 @event.listens_for(Session, "after_commit")
 def _flush_events(session: Session) -> None:
     for channel, message in session.info.pop(_KEY, []):
         publish(channel, message)
+    for queue, payload in session.info.pop(_OUTBOX, []):
+        try:
+            get_redis().rpush(queue, json.dumps(payload, default=str))
+        except Exception:  # pragma: no cover - delivery is best effort, the feed row stays
+            log.warning("could not queue a job for %s", queue, exc_info=True)
 
 
 @event.listens_for(Session, "after_rollback")
 def _drop_events(session: Session) -> None:
     session.info.pop(_KEY, None)
+    session.info.pop(_OUTBOX, None)
 
 
 def order_event(db: Session, kind: str, order: Any) -> None:

@@ -18,9 +18,11 @@ import { DishesPage } from '@/features/manager/DishesPage';
 import { IngredientsPage } from '@/features/manager/IngredientsPage';
 import { ManagerDashboardPage } from '@/features/manager/ManagerDashboardPage';
 import { ManagerMenuPage } from '@/features/manager/ManagerMenuPage';
+import { PromotionsPage } from '@/features/manager/PromotionsPage';
 import { ManagerSlotsPage } from '@/features/manager/ManagerSlotsPage';
 import { DishPage } from '@/features/menu/DishPage';
 import { MenuPage } from '@/features/menu/MenuPage';
+import { NotificationsPage } from '@/features/notifications/NotificationsPage';
 import { PublicCanteenPage } from '@/features/menu/PublicCanteenPage';
 import { OrderPage } from '@/features/orders/OrderPage';
 import { OrdersPage } from '@/features/orders/OrdersPage';
@@ -74,6 +76,7 @@ export const routes: RouteObject[] = [
       { path: 'cart', element: guard(<CartPage />, CUSTOMER) },
       { path: 'orders', element: guard(<OrdersPage />, CUSTOMER) },
       { path: 'orders/:id', element: guard(<OrderPage />, CUSTOMER) },
+      { path: 'notifications', element: guard(<NotificationsPage />, CUSTOMER) },
       { path: 'pay/mock/:paymentId', element: guard(<MockPaymentPage />, CUSTOMER) },
       // cook
       { path: 'kitchen', element: guard(<KitchenPage />, KITCHEN) },
@@ -93,6 +96,7 @@ export const routes: RouteObject[] = [
           MANAGER,
         ),
       },
+      { path: 'manager/promotions', element: guard(<PromotionsPage />, MANAGER) },
       { path: 'manager/menu', element: guard(<ManagerMenuPage />, MANAGER) },
       { path: 'manager/slots', element: guard(<ManagerSlotsPage />, MANAGER) },
       { path: 'manager/dishes', element: guard(<DishesPage />, MANAGER) },

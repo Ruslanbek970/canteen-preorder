@@ -8,9 +8,11 @@ from app.api.routers import (
     manager_catalog,
     me,
     menu,
+    notifications,
     orders,
     payments,
     pickup,
+    promotions,
     reference,
     reports,
     reviews,
@@ -54,6 +56,8 @@ def create_app() -> FastAPI:
         pickup.router,
         reviews.router,
         reports.router,
+        promotions.router,
+        notifications.router,
     ):
         app.include_router(router, prefix=API_PREFIX)
     app.include_router(ws_routes.router)

@@ -1,4 +1,5 @@
-"""WebSocket endpoints: `/ws/me` for a user's own orders, `/ws/kitchen/{id}` for staff."""
+"""WebSocket endpoints: `/ws/me` for a user's own orders and notifications,
+`/ws/kitchen/{id}` for staff."""
 
 import asyncio
 import contextlib
@@ -11,7 +12,7 @@ from app.db import SessionLocal
 from app.errors import DomainError
 from app.models import User, UserRole
 from app.security import user_from_token
-from app.ws.events import kitchen_channel, user_channel
+from app.ws.events import kitchen_channel, notification_channel, user_channel
 
 router = APIRouter()
 
@@ -31,10 +32,10 @@ def _user_from_token(token: str | None) -> User | None:
         return user
 
 
-async def _relay(websocket: WebSocket, channel: str) -> None:
+async def _relay(websocket: WebSocket, *channels: str) -> None:
     redis = AsyncRedis.from_url(get_settings().redis_url)
     pubsub = redis.pubsub()
-    await pubsub.subscribe(channel)
+    await pubsub.subscribe(*channels)
     await websocket.send_json({"type": "hello", "data": {}})
 
     async def forward() -> None:
@@ -54,7 +55,7 @@ async def _relay(websocket: WebSocket, channel: str) -> None:
     finally:
         for task in tasks:
             task.cancel()
-        await pubsub.unsubscribe(channel)
+        await pubsub.unsubscribe(*channels)
         await pubsub.aclose()
         await redis.aclose()
 
@@ -66,7 +67,7 @@ async def ws_me(websocket: WebSocket, token: str | None = None) -> None:
         await websocket.close(code=POLICY_VIOLATION)
         return
     await websocket.accept()
-    await _relay(websocket, user_channel(user.id))
+    await _relay(websocket, user_channel(user.id), notification_channel(user.id))
 
 
 @router.websocket("/ws/kitchen/{canteen_id}")

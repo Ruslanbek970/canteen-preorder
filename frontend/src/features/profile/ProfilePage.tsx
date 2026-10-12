@@ -21,6 +21,7 @@ import { ME_KEY, useLogout, useMe } from '@/features/auth/useMe';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 
 import { AllergyEditor, type AllergyChoice } from './AllergyEditor';
+import { NotificationSettings } from './NotificationSettings';
 
 const LANGUAGE_NAMES: Record<Language, string> = { ru: 'Русский', kk: 'Қазақша', en: 'English' };
 
@@ -37,6 +38,7 @@ export function ProfilePage() {
       <PageTitle>{t('pages.profile')}</PageTitle>
       <ProfileForm me={me.data} key={me.data.id} />
       {customer && <AllergySection />}
+      {customer && <NotificationSettings me={me.data} />}
       {customer && (
         <Card>
           <h2 className="font-medium">{t('profile.loyalty')}</h2>

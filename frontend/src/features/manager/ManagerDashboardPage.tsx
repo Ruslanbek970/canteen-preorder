@@ -79,7 +79,11 @@ function DashboardView({ data }: { data: Dashboard }) {
         <Stat
           label={t('manager.dashboard.promotions')}
           value={data.proposed_promotions}
-          hint={t('manager.dashboard.promotionsHint')}
+          hint={
+            <Link to="/manager/promotions" className="text-green-700 underline dark:text-green-400">
+              {t('manager.dashboard.promotionsHint')}
+            </Link>
+          }
         />
       </div>
       <Card>

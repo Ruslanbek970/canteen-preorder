@@ -57,6 +57,7 @@ class PromotionStatus(StrEnum):
 
 
 class NotificationChannel(StrEnum):
+    in_app = "in_app"
     push = "push"
     telegram = "telegram"
     sms = "sms"

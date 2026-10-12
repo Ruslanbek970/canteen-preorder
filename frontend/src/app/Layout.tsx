@@ -5,6 +5,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuthStore } from '@/features/auth/store';
 import { useLogout, useMe } from '@/features/auth/useMe';
 import { cartCount, useCartStore } from '@/features/cart/store';
+import { NotificationBell } from '@/features/notifications/NotificationBell';
 import { useLiveOrders } from '@/features/orders/useLiveOrders';
 
 import { NAV } from './nav';
@@ -17,7 +18,8 @@ export function Layout() {
   const navigate = useNavigate();
   const items = token && me.data ? NAV[me.data.role] : [];
   const inCart = useCartStore((s) => cartCount(s.lines));
-  useLiveOrders(me.data?.role === 'student' || me.data?.role === 'teacher');
+  const customer = me.data?.role === 'student' || me.data?.role === 'teacher';
+  useLiveOrders(Boolean(token) && customer);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -31,6 +33,7 @@ export function Layout() {
           </Link>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
+            {token && customer && <NotificationBell />}
             {token && me.data ? (
               <button
                 type="button"

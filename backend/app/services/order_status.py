@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from app.db import set_current_user
 from app.errors import ConflictError
 from app.models import Order, OrderStatus
+from app.notifications import service as notifications
+from app.services import loyalty
 from app.ws import events
 
 
@@ -72,4 +74,7 @@ def change_status(
         target, "order.status_changed"
     )
     events.order_event(db, kind, order)
+    notifications.on_status_change(db, order)
+    if target == S.picked_up:
+        loyalty.award(db, order)
     return order

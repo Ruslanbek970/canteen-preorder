@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 const MANAGER_TABS = [
   { to: '/manager', labelKey: 'manager.tabs.dashboard', end: true },
   { to: '/manager/reports', labelKey: 'manager.tabs.reports' },
+  { to: '/manager/promotions', labelKey: 'manager.tabs.promotions' },
   { to: '/manager/menu', labelKey: 'manager.tabs.menu' },
   { to: '/manager/slots', labelKey: 'manager.tabs.slots' },
   { to: '/manager/dishes', labelKey: 'manager.tabs.dishes' },

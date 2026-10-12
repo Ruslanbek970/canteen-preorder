@@ -86,7 +86,22 @@
   "profile": {
     "loyalty": "Loyalty points",
     "loyaltyHint": "1 point for every 100 ₸ of a collected order",
-    "marketing": "Receive discount notifications"
+    "marketing": "Receive discount notifications",
+    "notifications": {
+      "title": "Notifications",
+      "hint": "Order notifications always arrive in the app (the bell at the top). You can also get them in Telegram and in the browser.",
+      "telegramLinked": "Telegram is linked",
+      "unlink": "Unlink",
+      "linkTelegram": "Link Telegram",
+      "sendCode": "Send this message to the bot:",
+      "openBot": "Open {{bot}}",
+      "codeExpires": "The code is valid for {{minutes}} minutes.",
+      "push": "Browser notifications",
+      "pushToggle": "Send notifications to this device",
+      "pushUnsupported": "This browser does not support push notifications.",
+      "pushOff": "Push notifications are not set up on the server.",
+      "pushDenied": "The browser blocked notifications. Allow them in the site settings."
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -145,7 +160,13 @@
     "review_window_closed": "You can rate within 48 hours of pickup",
     "order_not_picked_up": "Only a picked-up order can be rated",
     "invalid_period": "The period starts after it ends",
-    "period_too_long": "The period must be at most a year"
+    "period_too_long": "The period must be at most a year",
+    "promotion_not_proposed": "This discount has already been decided",
+    "promotion_expired": "This discount has already expired",
+    "slot_over": "This slot is already over",
+    "promotion_not_found": "Discount not found",
+    "notification_not_found": "Notification not found",
+    "push_disabled_not_found": "Push notifications are not set up"
   },
   "units": {
     "g": "g",
@@ -196,7 +217,8 @@
       "dishes": "Dishes",
       "ingredients": "Ingredients",
       "slots": "Slots",
-      "reports": "Reports"
+      "reports": "Reports",
+      "promotions": "Discounts"
     },
     "syntheticNote": "Past weeks' sales history is synthetic (generated for the demo).",
     "dishes": {
@@ -324,6 +346,42 @@
       "reviews_many": "{{count}} reviews",
       "reviews_other": "{{count}} reviews",
       "distribution": "Rating distribution"
+    },
+    "promotions": {
+      "title": "Discounts",
+      "intro": "Every 30 minutes the system proposes 30% off dishes that are left over and spoil soon, and 20% off empty slots in the next hour. A discount starts once you approve it.",
+      "proposed": "Awaiting decision",
+      "noProposed": "No new proposals.",
+      "current": "Today and later",
+      "noCurrent": "No discounts for today.",
+      "slot": "Slot {{from}}–{{to}}",
+      "slotLoad": "{{booked}} of {{capacity}} booked",
+      "left": "{{available}} of {{planned}} portions left",
+      "until": "until {{time}}",
+      "bySystem": "proposed by the system",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveHint": "Once approved, people who bought this dish in the last 30 days get a notification (except those who turned off offers).",
+      "status": {
+        "proposed": "proposed",
+        "active": "active",
+        "rejected": "rejected",
+        "expired": "expired"
+      },
+      "type": {
+        "leftover": "leftovers",
+        "off_peak": "off-peak slot",
+        "loyalty": "loyalty"
+      },
+      "offPeakTitle": "Slot discount",
+      "offPeakHint": "A discount on the whole order picked up in the chosen slot. Starts right away.",
+      "slotField": "Today's slot",
+      "chooseSlot": "Choose a slot",
+      "percent": "Discount, %",
+      "percentHint": "from 5 to 50",
+      "create": "Create discount",
+      "created": "Discount created.",
+      "noSlots": "No open slots today."
     }
   },
   "cart": {
@@ -487,5 +545,15 @@
     "commentPlaceholder": "What you liked or not (optional)",
     "send": "Send rating",
     "thanks": "thanks for rating"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bellUnread_one": "{{count}} unread notification",
+    "bellUnread_few": "{{count}} unread notifications",
+    "bellUnread_many": "{{count}} unread notifications",
+    "bellUnread_other": "{{count}} unread notifications",
+    "readAll": "Mark all read",
+    "empty": "No notifications yet. Order updates, reminders and discounts will show up here.",
+    "unread": "unread"
   }
 }
