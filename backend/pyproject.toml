@@ -21,6 +21,11 @@ dependencies = [
     "pywebpush>=2.0,<3",
     "scikit-learn>=1.5,<2",
     "pandas>=2.2,<3",
+    "prometheus-fastapi-instrumentator>=7,<9",
+    "prometheus-client>=0.21",
+    "structlog>=24",
+    "gunicorn>=23",
+    "uvicorn-worker>=0.3",
 ]
 
 [project.optional-dependencies]

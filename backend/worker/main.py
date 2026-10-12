@@ -1,12 +1,14 @@
 """python -m worker.main — the APScheduler process (SPEC 10)."""
 
-import logging
-
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
+from prometheus_client import REGISTRY, start_http_server
 
 from app.config import get_settings
+from app.db import SessionLocal
+from app.logs import setup_logging
+from app.metrics import BusinessCollector
 from worker import jobs
 
 
@@ -29,10 +31,10 @@ def build_scheduler() -> BlockingScheduler:
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
-    )
-    logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    settings = get_settings()
+    setup_logging(json=settings.app_env == "prod")
+    REGISTRY.register(BusinessCollector(SessionLocal))
+    start_http_server(settings.worker_metrics_port)
     jobs.generate_slots()  # «и при старте»
     jobs.expire_unpaid_orders()
     build_scheduler().start()

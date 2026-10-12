@@ -1,0 +1,5 @@
+# No Telegram chat configured: alerts are only shown in Prometheus and Grafana.
+route:
+  receiver: none
+receivers:
+  - name: none

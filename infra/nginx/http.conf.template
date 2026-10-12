@@ -1,0 +1,12 @@
+# Until the certificate exists: the app over plain HTTP (also fine for a server without a domain).
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
+server {
+  listen 80;
+  server_name ${DOMAIN};
+  include /etc/nginx/snippets/common.conf;
+  include /etc/nginx/snippets/locations.conf;
+}

@@ -1,7 +1,8 @@
 COMPOSE ?= docker compose
 BACKEND = $(COMPOSE) exec backend
 
-.PHONY: dev down logs ps migrate seed test test-backend test-frontend lint format e2e load-test
+.PHONY: dev down logs ps migrate seed test test-backend test-frontend lint format e2e load-test \
+	monitoring backup restore
 
 dev: ## start the dev environment (frontend: http://localhost:5173)
 	@test -f .env || cp .env.example .env
@@ -46,3 +47,15 @@ load-test: ## k6 order rush: 500 students, 6 slots x 30 places (docs/load-test.m
 	$(BACKEND) python -m scripts.load_setup
 	$(COMPOSE) --profile load run --rm k6
 	$(BACKEND) python -m scripts.load_check
+
+monitoring: ## Prometheus http://localhost:9090 and Grafana http://localhost:3000 (admin/admin)
+	$(COMPOSE) --profile monitoring up -d prometheus grafana
+
+# Production server (docs/deployment.md)
+PROD = docker compose -f docker-compose.prod.yml
+
+backup: ## a database dump now, into the `backups` volume
+	$(PROD) exec backup sh /scripts/backup.sh once
+
+restore: ## make restore FILE=/backups/canteen-....dump [DB=canteen] (default: test database)
+	$(PROD) exec backup sh /scripts/restore.sh $(FILE) $(DB)

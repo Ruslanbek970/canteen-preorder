@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # another request needs to give its connection back. Processes x total < max_connections.
     db_pool_size: int = 10
     db_max_overflow: int = 10
+    # The worker serves its Prometheus metrics here (SPEC 14.8).
+    worker_metrics_port: int = 9100
 
     jwt_secret: str = ""
     access_token_minutes: int = 15
@@ -32,6 +34,10 @@ class Settings(BaseSettings):
     smtp_host: str = "mailpit"
     smtp_port: int = 1025
     smtp_from: str = "noreply@canteen.local"
+    # Production mail servers want a login and STARTTLS (port 587); Mailpit needs neither.
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_starttls: bool = False
 
     telegram_bot_token: str = ""
     telegram_bot_username: str = ""

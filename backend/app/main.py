@@ -25,6 +25,9 @@ from app.api.routers import (
 )
 from app.config import get_settings
 from app.errors import install_error_handlers
+from app.logs import setup_logging
+from app.metrics import install_http_metrics
+from app.middleware import RequestIdMiddleware
 from app.ws import routes as ws_routes
 
 API_PREFIX = "/api/v1"
@@ -46,6 +49,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    setup_logging(json=settings.app_env == "prod")
     app = FastAPI(
         title="Canteen Pre-order API",
         version="0.1.0",
@@ -61,7 +65,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(RequestIdMiddleware)
     install_error_handlers(app)
+    install_http_metrics(app)
     for router in (
         health.router,
         auth.router,

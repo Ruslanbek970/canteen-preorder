@@ -1,0 +1,246 @@
+# Production stack (SPEC 14.3). Images come from GHCR, built by .github/workflows/deploy.yml.
+# On the server: .env (see .env.prod.example) next to this file, then
+#   docker compose -f docker-compose.prod.yml up -d
+# docs/deployment.md has the full setup.
+
+x-backend: &backend
+  image: ghcr.io/${GHCR_OWNER:-ruslanbek970}/canteen-preorder-backend:${IMAGE_TAG:-latest}
+  env_file: .env
+  environment:
+    APP_ENV: prod
+    TZ: Asia/Almaty
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: canteen
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: canteen
+      TZ: Asia/Almaty
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canteen -d canteen"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    logging: *logging
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    logging: *logging
+
+  backend:
+    <<: *backend
+    command: ["gunicorn", "-c", "gunicorn.conf.py", "app.main:app"]
+    environment:
+      APP_ENV: prod
+      TZ: Asia/Almaty
+      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/ready')"
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging: *logging
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "worker.main"]
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:9100/metrics')"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *logging
+
+  bot:
+    <<: *backend
+    command: ["python", "-m", "bot.main"]
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import os, redis; redis.Redis.from_url(os.environ['REDIS_URL']).ping()"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging: *logging
+
+  nginx:
+    image: ghcr.io/${GHCR_OWNER:-ruslanbek970}/canteen-preorder-frontend:${IMAGE_TAG:-latest}
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx:/etc/nginx/canteen:ro
+      - ./infra/nginx/security.conf:/etc/nginx/snippets/security.conf:ro
+      - ./infra/nginx/common.conf:/etc/nginx/snippets/common.conf:ro
+      - ./infra/nginx/locations.conf:/etc/nginx/snippets/locations.conf:ro
+      - ./infra/nginx/40-certs.sh:/docker-entrypoint.d/40-certs.sh:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/nginx-health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+
+  # Gets the Let's Encrypt certificate once nginx answers on port 80, then renews it.
+  certbot:
+    image: certbot/certbot:v3.0.1
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        trap exit TERM
+        until certbot certonly --webroot -w /var/www/certbot -d "$$DOMAIN" \
+          --email "$$ACME_EMAIL" --agree-tos --non-interactive --keep-until-expiring; do
+          sleep 300
+        done
+        while :; do
+          certbot renew --webroot -w /var/www/certbot --quiet
+          sleep 12h & wait $$!
+        done
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    healthcheck:
+      test: ["CMD-SHELL", "test -d /etc/letsencrypt"]
+      interval: 1h
+    restart: unless-stopped
+    logging: *logging
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    entrypoint: ["/bin/sh", "/etc/alertmanager/start.sh"]
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      ALERT_TELEGRAM_CHAT_ID: ${ALERT_TELEGRAM_CHAT_ID:-}
+    volumes:
+      - ./infra/alertmanager:/etc/alertmanager:ro
+      - alertmanager_data:/alertmanager
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_SERVER_ROOT_URL: https://${DOMAIN}/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/canteen.json
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+
+  # Daily pg_dump at 03:00 Almaty time, kept for 14 days (SPEC 14.9).
+  backup:
+    image: postgres:16-alpine
+    entrypoint: ["/bin/sh", "/scripts/backup.sh"]
+    environment:
+      PGHOST: db
+      PGUSER: canteen
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: canteen
+      TZ: "<+05>-5"
+      BACKUP_HOUR: "03"
+      BACKUP_KEEP_DAYS: "14"
+    volumes:
+      - ./infra/backup:/scripts:ro
+      - backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "db", "-U", "canteen"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+
+volumes:
+  db_data:
+  redis_data:
+  letsencrypt:
+  certbot_www:
+  prometheus_data:
+  alertmanager_data:
+  grafana_data:
+  backups:

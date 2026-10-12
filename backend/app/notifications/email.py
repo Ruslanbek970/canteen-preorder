@@ -17,9 +17,13 @@ def send_email(to: str, subject: str, body: str) -> bool:
     msg["Subject"] = subject
     msg.set_content(body)
     try:
-        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=5) as smtp:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=10) as smtp:
+            if settings.smtp_starttls:
+                smtp.starttls()
+            if settings.smtp_user:
+                smtp.login(settings.smtp_user, settings.smtp_password)
             smtp.send_message(msg)
         return True
-    except OSError:
+    except (OSError, smtplib.SMTPException):
         log.warning("failed to send e-mail to %s", to, exc_info=True)
         return False

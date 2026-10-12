@@ -15,6 +15,7 @@ from redis.asyncio import Redis as AsyncRedis
 
 from app.config import get_settings
 from app.db import SessionLocal
+from app.logs import setup_logging
 from app.notifications.service import TELEGRAM_QUEUE
 from app.services import telegram
 
@@ -68,9 +69,7 @@ async def run() -> None:
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
-    )
+    setup_logging(json=get_settings().app_env == "prod")
     asyncio.run(run())
 
 

@@ -4,3 +4,7 @@ __pycache__
 .ruff_cache
 .coverage
 htmlcov
+.env
+load_users.json
+dump.rdb
+coverage.xml

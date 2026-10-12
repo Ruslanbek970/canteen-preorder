@@ -28,7 +28,7 @@
 - [x] Фаза 9. Прогноз спроса
 - [x] Фаза 10. Админка
 - [x] Фаза 11. Качество и нагрузка
-- [ ] Фаза 12. Продакшен
+- [ ] Фаза 12. Продакшен (всё готово и проверено локально; ждёт VPS и домен)
 - [ ] Фаза 13. Документация и защита
 
 ## Решения
@@ -110,6 +110,12 @@
 - Фаза 11. Нагрузочный тест нашёл зависание: пул потоков FastAPI (40) больше пула соединений (30), и под давкой запросы ждали 30 с. Пул соединений вынесен в `DB_POOL_SIZE`/`DB_MAX_OVERFLOW` (10 + 10), пул потоков ограничен тем же числом. Подробности в `docs/load-test.md`.
 - Фаза 11. Нагрузочный тест идёт на отдельной столовой `load-*` и пользователях `load-NNN@load.demo`, данные создаёт `scripts/load_setup.py`. k6 в docker compose запускается только с профилем `load` (`make load-test`).
 - Фаза 11. `npm audit`: в зависимостях приложения остаются 2 предупреждения средней важности в react-router 6 (открытый редирект через `\` в `<Link>`/`navigate` и SSR-гидратация). Исправление есть только в react-router 7 (ломающее обновление). У нас SSR нет, а переходы идут только на свои пути (`/orders/{id}`, `/menu`, путь из guard-а), поэтому обновление отложено. Остальные предупреждения — в инструментах разработки (vitest, tailwind), в сборку не попадают.
+- Фаза 12. Бизнес-метрики (`orders_created_total`, `orders_by_status`, `slot_fill_ratio`) считает worker запросом к базе при каждом опросе Prometheus, а не счётчики в процессах API: так числа не зависят от того, какой процесс gunicorn принял заказ, и не сбрасываются при перезапуске. Метка у метрик задач называется `task`, потому что `job` Prometheus занимает под имя цели. Добавлены `canteen_db_up` (для алерта «БД недоступна») и `job_consecutive_failures` (для алерта «задача упала 3 раза подряд»).
+- Фаза 12. HTTPS: пока сертификата нет, nginx работает по HTTP (нужно для выдачи сертификата, и сайт уже открывается), после выдачи сам переключается на HTTPS. Самоподписанный сертификат не используется: в образе nginx нет openssl.
+- Фаза 12. Деплой логинится в GHCR токеном `GITHUB_TOKEN` своего запуска, отдельный `GHCR_TOKEN` не нужен. Без секрета `SSH_HOST` шаг деплоя пропускается, образы всё равно публикуются.
+- Фаза 12. Алерты уходят в Telegram через Alertmanager тем же ботом (`TELEGRAM_BOT_TOKEN`) в чат `ALERT_TELEGRAM_CHAT_ID`; без чата они видны только в Grafana.
+- Фаза 12. Для настоящей почты добавлены `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_STARTTLS`.
+- Фаза 12. Kubernetes (SPEC 14.10, бонус) не делался.
 - Фаза 1. Админ имеет доступ к экранам заведующей (SPEC 6: меню, блюда, отчёты — «manager ✔ admin ✔»).
 
 ## Журнал
@@ -335,4 +341,26 @@
 - нагрузка: `make load-test` (или три команды из `docs/load-test.md` в PowerShell), в конце `OK: booked_count <= capacity ...`;
 - доступность: `cd frontend && npm run e2e`;
 - PWA: `cd frontend && npm run build && npm run preview`, открыть в Chrome, «Установить приложение»; в DevTools → Network → Offline меню открывается, сверху «Нет сети».
+
+## Фаза 12. Продакшен — 2026-10-12
+Сделано:
+- `docker-compose.prod.yml`: db, redis, backend (gunicorn + uvicorn workers), worker, bot, nginx (фронт + прокси + TLS), certbot, prometheus, alertmanager, grafana, backup; у всех `restart: unless-stopped`, healthcheck и ротация логов; `.env.prod.example`;
+- nginx: HTTP → HTTPS после выдачи сертификата Let's Encrypt, HTTP/2, HSTS и заголовки безопасности, WebSocket, Grafana на `/grafana/`, правильный кэш для `sw.js`, `index.html`, манифеста и `/assets/`;
+- CD `.github/workflows/deploy.yml`: после зелёного CI на `main` образы в GHCR (`sha` и `latest`), копирование конфигов и `.env` по SSH, `infra/deploy.sh` (pull, миграции отдельной командой, up, проверка `/health/ready`, откат на предыдущий тег);
+- метрики Prometheus (HTTP, бизнес, фоновые задачи), дашборд Grafana (provisioning), 4 алерта, Alertmanager → Telegram; JSON-логи structlog с `request_id`;
+- бэкапы: ежедневный `pg_dump` в 03:00, хранение 14 дней, `make backup`, `make restore`; восстановление проверено на тестовой базе;
+- dev: `make monitoring` (Prometheus и Grafana, профиль `monitoring`);
+- `docs/deployment.md`: схема, первый запуск сервера, секреты GitHub, HTTPS, мониторинг, бэкапы, результаты проверки.
+Тесты: backend 281, покрытие 97 % (request id, HTTP-метрики, JSON-логи с request id, бизнес-метрики, «БД недоступна», ошибки задач подряд, SMTP с логином и STARTTLS).
+Проверено вручную: весь prod-стек поднят локально (все сервисы healthy, HTTP и HTTPS режимы nginx, Prometheus видит цели и правила, Grafana показывает метрики — `docs/deployment/grafana.png`), деплой и откат «сломанной» версии через `deploy.sh`, k6 через nginx и HTTPS: p95 = 33 мс при 200 студентах.
+Отложено / не сделано:
+- реальный сервер и домен: нужны VPS и домен от команды; после этого — 4 секрета в GitHub (см. `docs/deployment.md`), и push в `main` начнёт обновлять сайт;
+- повторить k6 на сервере и снять Grafana во время теста (SPEC 13);
+- Kubernetes (бонус SPEC 14.10).
+Известные проблемы:
+- до первого деплоя на сервер шаг `server` в workflow Deploy пропускается (это не ошибка).
+Как проверить:
+- `git pull`, `docker compose up -d --build`, затем `make monitoring` → http://localhost:3000, дашборд «Столовая: обзор»;
+- в GitHub → Actions → Deploy: образы опубликованы в GHCR (Packages);
+- бэкап и восстановление: `docs/deployment.md`, раздел «Бэкапы».
 

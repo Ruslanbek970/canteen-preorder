@@ -8,6 +8,7 @@ from functools import wraps
 from typing import Any
 
 from app.db import SessionLocal
+from app.metrics import record_job
 from app.notifications import push
 from app.notifications import service as notifications
 from app.services import orders, pickup, promotions, slots
@@ -25,8 +26,11 @@ def job(fn: Callable[..., Any]) -> Callable[[], Any]:
                 result = fn(db)
         except Exception:
             log.exception("job %s failed", fn.__name__)
+            record_job(fn.__name__, time.monotonic() - started, ok=False)
             return None
-        log.info("job %s done: %s (%.2fs)", fn.__name__, result, time.monotonic() - started)
+        seconds = time.monotonic() - started
+        log.info("job %s done: %s (%.2fs)", fn.__name__, result, seconds)
+        record_job(fn.__name__, seconds, ok=True)
         return result
 
     return run

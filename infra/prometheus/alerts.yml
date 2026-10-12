@@ -1,0 +1,33 @@
+# Alerts from SPEC 14.8. Sent to Telegram by Alertmanager when ALERT_TELEGRAM_CHAT_ID is set,
+# always visible in Prometheus (/alerts) and Grafana.
+groups:
+  - name: canteen
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+            / clamp_min(sum(rate(http_requests_total[5m])), 1e-9) > 0.02
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Больше 2% ответов API с ошибкой 5xx за 5 минут"
+
+      - alert: DatabaseDown
+        expr: canteen_db_up == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: "База данных недоступна"
+
+      - alert: JobFailing
+        expr: job_consecutive_failures >= 3
+        labels: { severity: warning }
+        annotations:
+          summary: "Фоновая задача {{ $labels.task }} упала 3 раза подряд"
+
+      - alert: TargetDown
+        expr: up{job=~"backend|worker"} == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Сервис {{ $labels.job }} не отвечает"

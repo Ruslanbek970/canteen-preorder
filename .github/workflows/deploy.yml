@@ -1,0 +1,108 @@
+name: Deploy
+
+# SPEC 14.7: after a green CI on main, build the images, push them to GHCR and update the server.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+jobs:
+  images:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      owner: ${{ steps.owner.outputs.owner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+      - id: owner
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: true
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.owner }}/canteen-preorder-backend:${{ env.SHA }}
+            ghcr.io/${{ steps.owner.outputs.owner }}/canteen-preorder-backend:latest
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+      - name: Frontend image (nginx with the build)
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          target: prod
+          push: true
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.owner }}/canteen-preorder-frontend:${{ env.SHA }}
+            ghcr.io/${{ steps.owner.outputs.owner }}/canteen-preorder-frontend:latest
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+  server:
+    needs: images
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || 'canteen' }}
+    steps:
+      - name: Is a server configured?
+        id: check
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "::notice::No SSH_HOST secret: images are pushed, the server step is skipped (docs/deployment.md)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.ready == 'true'
+        with:
+          ref: ${{ env.SHA }}
+      - name: SSH key
+        if: steps.check.outputs.ready == 'true'
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+      - name: Copy compose files and .env
+        if: steps.check.outputs.ready == 'true'
+        env:
+          PROD_ENV: ${{ secrets.PROD_ENV }}
+        run: |
+          SSH="ssh -i ~/.ssh/id_deploy $SSH_USER@$SSH_HOST"
+          tar czf - docker-compose.prod.yml infra | $SSH "mkdir -p $DEPLOY_PATH && tar xzf - -C $DEPLOY_PATH"
+          printf '%s\n' "$PROD_ENV" | $SSH "umask 077 && cat > $DEPLOY_PATH/.env"
+      - name: Pull, migrate, restart, check health (rolls back on failure)
+        if: steps.check.outputs.ready == 'true'
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SSH="ssh -i ~/.ssh/id_deploy $SSH_USER@$SSH_HOST"
+          printf '%s' "$TOKEN" | $SSH "docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+          $SSH "cd $DEPLOY_PATH && GHCR_OWNER=${{ needs.images.outputs.owner }} sh infra/deploy.sh $SHA"

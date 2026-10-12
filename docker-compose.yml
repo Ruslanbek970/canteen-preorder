@@ -129,6 +129,28 @@ services:
       - "8025:8025"
       - "1025:1025"
 
+  # Monitoring (SPEC 14.2): `docker compose --profile monitoring up -d`,
+  # Grafana http://localhost:3000 (admin / admin), Prometheus http://localhost:9090.
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    profiles: ["monitoring"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    profiles: ["monitoring"]
+    ports:
+      - "3000:3000"
+    environment:
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/canteen.json
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+
   # k6 order rush (SPEC 13): `make load-test`. Only started with `--profile load`.
   k6:
     image: grafana/k6:0.54.0
