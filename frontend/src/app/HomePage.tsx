@@ -1,32 +1,31 @@
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
-const SECTIONS = [
-  { to: '/menu', labelKey: 'roles.student' },
-  { to: '/kitchen', labelKey: 'roles.kitchen' },
-  { to: '/pickup', labelKey: 'roles.cashier' },
-  { to: '/manager', labelKey: 'roles.manager' },
-  { to: '/admin', labelKey: 'roles.admin' },
-] as const;
+import { Link } from 'react-router-dom';
 
 export function HomePage() {
   const { t } = useTranslation();
   return (
-    <section className="mx-auto max-w-3xl p-4">
-      <h1 className="text-2xl font-semibold">{t('home.title')}</h1>
-      <p className="mt-2 text-slate-500 dark:text-slate-400">{t('home.subtitle')}</p>
-      <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-        {SECTIONS.map((s) => (
-          <li key={s.to}>
-            <Link
-              to={s.to}
-              className="block rounded-lg border border-slate-200 p-4 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900"
-            >
-              {t(s.labelKey)}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <section className="mx-auto max-w-xl p-4 text-center">
+      <h1 className="mt-6 text-3xl font-semibold">{t('home.title')}</h1>
+      <p className="mt-3 text-slate-600 dark:text-slate-300">{t('home.subtitle')}</p>
+      <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
+        <Link
+          to="/login"
+          className="rounded-lg bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700"
+        >
+          {t('auth.login')}
+        </Link>
+        <Link
+          to="/register"
+          className="rounded-lg border border-slate-300 px-5 py-3 font-medium hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900"
+        >
+          {t('auth.register')}
+        </Link>
+      </div>
+      <p className="mt-6 text-sm">
+        <Link to="/c/main" className="text-green-700 underline dark:text-green-400">
+          {t('home.publicMenu')}
+        </Link>
+      </p>
     </section>
   );
 }

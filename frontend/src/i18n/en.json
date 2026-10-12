@@ -5,18 +5,32 @@
   },
   "nav": {
     "home": "Home",
-    "language": "Language"
+    "language": "Language",
+    "menu": "Menu",
+    "orders": "Orders",
+    "profile": "Profile",
+    "kitchen": "Kitchen",
+    "pickup": "Pickup",
+    "pos": "POS",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "main": "Main navigation",
+    "skipToContent": "Skip to content"
   },
   "home": {
     "title": "Canteen Pre-order",
-    "subtitle": "App skeleton. Pick a section:"
+    "subtitle": "Order lunch in advance, pick a time in your break and collect it by QR without queuing.",
+    "publicMenu": "View the menu without signing in"
   },
   "roles": {
     "student": "Student",
-    "kitchen": "Kitchen",
     "cashier": "Cashier",
-    "manager": "Manager",
-    "admin": "Admin"
+    "admin": "Admin",
+    "teacher": "Teacher",
+    "cook": "Cook",
+    "canteen_manager": "Canteen manager",
+    "studentRole": "I am a student",
+    "teacherRole": "I am a teacher"
   },
   "pages": {
     "login": "Sign in",
@@ -30,5 +44,69 @@
     "admin": "Administration",
     "publicCanteen": "Canteen menu",
     "notFound": "Page not found"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Sign up",
+    "email": "E-mail",
+    "emailHint": "University e-mail only",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "fullName": "Full name",
+    "role": "Who are you",
+    "group": "Group",
+    "chooseGroup": "Choose a group",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "register": "Sign up",
+    "noAccount": "No account?",
+    "haveAccount": "Already have an account?",
+    "demoHint": "Demo: student@demo.kz, cook@demo.kz, cashier@demo.kz, manager@demo.kz, admin@demo.kz — password demo1234",
+    "verifyTitle": "Confirm your e-mail",
+    "verifyText": "We sent a 6-digit code to your e-mail. You cannot order until it is confirmed.",
+    "code": "Code from the e-mail",
+    "verify": "Confirm",
+    "resend": "Send the code again",
+    "codeResent": "A new code has been sent"
+  },
+  "onboarding": {
+    "title": "Welcome!",
+    "subtitle": "A couple of settings so the menu and slots fit you. You can skip this."
+  },
+  "allergy": {
+    "title": "Allergies",
+    "consent": "I agree to store my health data (allergies). Only you can see it; the kitchen only sees a mark on the order.",
+    "severity": "Severity",
+    "mild": "Mild",
+    "moderate": "Moderate",
+    "severe": "Severe (block)",
+    "revokeWarning": "After saving, the consent is withdrawn and allergy data is deleted."
+  },
+  "profile": {
+    "loyalty": "Loyalty points",
+    "loyaltyHint": "1 point for every 100 ₸ of a collected order",
+    "marketing": "Receive discount notifications"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Retry",
+    "save": "Save",
+    "saved": "Saved",
+    "skip": "Skip",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "invalid_credentials": "Wrong e-mail or password",
+    "rate_limited": "Too many attempts. Wait a minute.",
+    "email_domain_not_allowed": "Sign-up only with a university e-mail",
+    "email_taken": "This e-mail is already registered",
+    "group_required": "Choose a group",
+    "invalid_code": "Wrong or expired code",
+    "user_blocked": "The account is blocked",
+    "validation_error": "Check the entered data",
+    "forbidden": "Access denied",
+    "health_consent_required": "Consent to store health data is required"
   }
 }
