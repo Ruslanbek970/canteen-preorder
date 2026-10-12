@@ -3,7 +3,7 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci && md5sum package-lock.json | cut -d' ' -f1 > node_modules/.package-lock.md5
 
 # Dev server with hot reload (docker-compose.yml mounts ./frontend over /app).
 FROM deps AS dev
