@@ -57,6 +57,30 @@ services:
       redis:
         condition: service_healthy
 
+  # Scheduled jobs (SPEC 10): slots at 05:00, expiring unpaid orders every minute, ...
+  worker:
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: "true"
+    command: sh -c "python -m scripts.wait_for_migrations && python -m worker.main"
+    environment:
+      DATABASE_URL: postgresql+psycopg://canteen:canteen@db:5432/canteen
+      REDIS_URL: redis://redis:6379/0
+      SMTP_HOST: mailpit
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_started
+
   frontend:
     build:
       context: ./frontend

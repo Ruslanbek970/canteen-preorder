@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.db import set_current_user
 from app.errors import ConflictError
 from app.models import Order, OrderStatus
+from app.ws import events
 
 
 class Actor(StrEnum):
@@ -67,4 +68,8 @@ def change_status(
             "status_changed", "Статус заказа уже изменился, обновите страницу", {"to": target}
         )
     db.refresh(order)
+    kind = {S.paid: "order.paid", S.cancelled: "order.cancelled"}.get(
+        target, "order.status_changed"
+    )
+    events.order_event(db, kind, order)
     return order

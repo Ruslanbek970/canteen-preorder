@@ -21,7 +21,6 @@ from app.models import (
     OrderItem,
     OrderStatus,
     Payment,
-    PaymentMethod,
     PaymentStatus,
     PickupSlot,
     User,
@@ -38,9 +37,10 @@ from app.schemas.orders import (
 )
 from app.services import allergens as allergy
 from app.services import menu as menu_service
-from app.services import pricing, slots, users
+from app.services import payments, pricing, slots, users
 from app.services.order_status import Actor, change_status
 from app.utils import time as clock
+from app.ws import events
 
 NO_SHOW_WARNING_THRESHOLD = 3
 
@@ -233,11 +233,8 @@ def create_order(db: Session, user: User, data: OrderCreate) -> OrderOut:
         set_current_user(db, user.id)
         db.add(order)
         db.flush()
-        amount = subtotal - discount_total
-        payment = None
-        if amount > 0:
-            payment = Payment(order_id=order.id, method=PaymentMethod.kaspi_qr, amount=amount)
-            db.add(payment)
+        payments.create_pending(db, order)
+        events.order_event(db, "order.created", order)
         db.commit()
     except Exception:
         db.rollback()
@@ -278,9 +275,9 @@ def cancel_order(db: Session, user: User, order_id: int) -> OrderOut:
         change_status(db, order, OrderStatus.cancelled, Actor.customer, user.id)
         release_resources(db, order)
         if was_paid:
-            refund_payments(db, order)
+            payments.refund_order(db, order)
         else:
-            fail_pending_payments(db, order)
+            payments.fail_pending(db, order)
         db.commit()
     except Exception:
         db.rollback()
@@ -292,23 +289,6 @@ def release_resources(db: Session, order: Order) -> None:
     return_portions(db, list(order.items))
     if order.pickup_slot_id is not None:
         slots.release(db, order.pickup_slot_id)
-
-
-def refund_payments(db: Session, order: Order) -> None:
-    """Mock refund; phase 4 routes it through the PaymentProvider."""
-    db.execute(
-        update(Payment)
-        .where(Payment.order_id == order.id, Payment.status == PaymentStatus.succeeded)
-        .values(status=PaymentStatus.refunded, completed_at=clock.now_utc())
-    )
-
-
-def fail_pending_payments(db: Session, order: Order) -> None:
-    db.execute(
-        update(Payment)
-        .where(Payment.order_id == order.id, Payment.status == PaymentStatus.pending)
-        .values(status=PaymentStatus.failed, completed_at=clock.now_utc())
-    )
 
 
 def get_order_for(db: Session, user: User, order_id: int) -> Order:
@@ -329,9 +309,10 @@ def get_order_for(db: Session, user: User, order_id: int) -> Order:
 
 def order_out(db: Session, order: Order) -> OrderOut:
     canteen = db.get(Canteen, order.canteen_id)
-    payment_id = db.scalar(
-        select(Payment.id).where(Payment.order_id == order.id).order_by(Payment.id.desc()).limit(1)
+    payment = db.scalar(
+        select(Payment).where(Payment.order_id == order.id).order_by(Payment.id.desc()).limit(1)
     )
+    pending = payment is not None and payment.status == PaymentStatus.pending
     slot = order.pickup_slot
     return OrderOut(
         id=order.id,
@@ -371,8 +352,13 @@ def order_out(db: Session, order: Order) -> OrderOut:
             )
             for i in order.items
         ],
-        payment_id=payment_id,
-        payment_url=None,
+        payment_id=payment.id if payment else None,
+        payment_url=payments.payment_url(payment)
+        if pending and order.status == OrderStatus.pending_payment
+        else None,
+        pay_until=order.created_at + timedelta(minutes=get_settings().unpaid_order_timeout_minutes)
+        if order.status == OrderStatus.pending_payment
+        else None,
         can_cancel=can_cancel(order),
         cancel_until=cancel_deadline(order) if order.status == OrderStatus.paid else None,
     )
@@ -442,3 +428,31 @@ def repeat_order(db: Session, user: User, order_id: int, day: date | None) -> Re
                 )
             )
     return RepeatResponse(canteen_id=order.canteen_id, date=day, items=lines, skipped=skipped)
+
+
+def expire_unpaid_orders(db: Session) -> int:
+    """Worker, every minute (SPEC 10): unpaid orders older than the timeout are cancelled and
+    give back portions and the slot place. Idempotent; SKIP LOCKED lets two workers coexist."""
+    cutoff = clock.now_utc() - timedelta(minutes=get_settings().unpaid_order_timeout_minutes)
+    ids = db.scalars(
+        select(Order.id)
+        .where(Order.status == OrderStatus.pending_payment, Order.created_at < cutoff)
+        .order_by(Order.id)
+    ).all()
+    expired = 0
+    for order_id in ids:
+        order = db.scalar(
+            select(Order)
+            .options(selectinload(Order.items))
+            .where(Order.id == order_id, Order.status == OrderStatus.pending_payment)
+            .with_for_update(skip_locked=True)
+        )
+        if order is None:
+            db.rollback()
+            continue
+        change_status(db, order, OrderStatus.cancelled, Actor.system)
+        release_resources(db, order)
+        payments.fail_pending(db, order)
+        db.commit()
+        expired += 1
+    return expired

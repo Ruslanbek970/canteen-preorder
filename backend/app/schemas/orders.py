@@ -61,6 +61,7 @@ class OrderOut(BaseModel):
     items: list[OrderItemOut]
     payment_id: int | None = None
     payment_url: str | None = None
+    pay_until: datetime | None = None
     can_cancel: bool = False
     cancel_until: datetime | None = None
     no_show_warning: bool = False

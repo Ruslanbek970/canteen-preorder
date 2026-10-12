@@ -4,7 +4,9 @@ from fastapi import APIRouter
 
 from app.api.deps import DB, Customer, Page
 from app.schemas.orders import OrderCreate, OrderList, OrderOut, RepeatResponse
+from app.schemas.payments import PaymentOut
 from app.services import orders as order_service
+from app.services import payments
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -34,3 +36,9 @@ def cancel_order(order_id: int, user: Customer, db: DB) -> OrderOut:
 @router.post("/{order_id}/repeat", response_model=RepeatResponse)
 def repeat_order(order_id: int, user: Customer, db: DB, date: date | None = None) -> RepeatResponse:
     return order_service.repeat_order(db, user, order_id, date)
+
+
+@router.post("/{order_id}/pay", response_model=PaymentOut)
+def pay_order(order_id: int, user: Customer, db: DB) -> PaymentOut:
+    """A payment link for an unpaid order (again after «Отказ»)."""
+    return payments.start_payment(db, user, order_id)
