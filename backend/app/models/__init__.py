@@ -1,0 +1,76 @@
+"""SQLAlchemy models for all tables of docs/schema.sql plus SPEC 5.2 additions."""
+
+from app.models.base import Base
+from app.models.campus import Building, Canteen, ClassSchedule, StudentGroup, User
+from app.models.enums import (
+    AllergySeverity,
+    NotificationChannel,
+    OrderChannel,
+    OrderStatus,
+    PaymentMethod,
+    PaymentStatus,
+    PromotionStatus,
+    PromotionType,
+    UserRole,
+    WasteReason,
+)
+from app.models.feedback import (
+    DailyCounter,
+    DishReview,
+    ForecastRun,
+    Notification,
+    PushSubscription,
+    RefreshToken,
+    WasteRecord,
+)
+from app.models.menu import (
+    Allergen,
+    Dish,
+    DishCategory,
+    DishIngredient,
+    Ingredient,
+    IngredientAllergen,
+    MenuItem,
+    UserAllergen,
+)
+from app.models.orders import Order, OrderItem, OrderStatusHistory, Payment, PickupSlot, Promotion
+
+__all__ = [
+    "Allergen",
+    "AllergySeverity",
+    "Base",
+    "Building",
+    "Canteen",
+    "ClassSchedule",
+    "DailyCounter",
+    "Dish",
+    "DishCategory",
+    "DishIngredient",
+    "DishReview",
+    "ForecastRun",
+    "Ingredient",
+    "IngredientAllergen",
+    "MenuItem",
+    "Notification",
+    "NotificationChannel",
+    "Order",
+    "OrderChannel",
+    "OrderItem",
+    "OrderStatus",
+    "OrderStatusHistory",
+    "Payment",
+    "PaymentMethod",
+    "PaymentStatus",
+    "PickupSlot",
+    "Promotion",
+    "PromotionStatus",
+    "PromotionType",
+    "PushSubscription",
+    "RefreshToken",
+    "StudentGroup",
+    "User",
+    "UserAllergen",
+    "UserRole",
+    "WasteReason",
+    "WasteRecord",
+]

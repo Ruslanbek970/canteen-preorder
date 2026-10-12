@@ -1,0 +1,117 @@
+from datetime import datetime, time
+
+import sqlalchemy as sa
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import Base, TimestampTZ, created_at_col, int_pk
+from app.models.enums import UserRole, user_role
+
+
+class Building(Base):
+    __tablename__ = "buildings"
+
+    id: Mapped[int] = int_pk()
+    name: Mapped[str] = mapped_column(sa.String(100), nullable=False, unique=True)
+    address: Mapped[str | None] = mapped_column(sa.String(255))
+
+
+class Canteen(Base):
+    __tablename__ = "canteens"
+    __table_args__ = (
+        sa.CheckConstraint("default_slot_minutes BETWEEN 5 AND 60", name="default_slot_minutes"),
+        sa.CheckConstraint("default_slot_capacity > 0", name="default_slot_capacity"),
+        sa.CheckConstraint("opens_at < closes_at", name="hours"),
+    )
+
+    id: Mapped[int] = int_pk()
+    building_id: Mapped[int] = mapped_column(sa.ForeignKey("buildings.id"), nullable=False)
+    name: Mapped[str] = mapped_column(sa.String(100), nullable=False)
+    opens_at: Mapped[time] = mapped_column(sa.Time, nullable=False)
+    closes_at: Mapped[time] = mapped_column(sa.Time, nullable=False)
+    default_slot_minutes: Mapped[int] = mapped_column(
+        sa.SmallInteger, nullable=False, server_default="10"
+    )
+    default_slot_capacity: Mapped[int] = mapped_column(
+        sa.SmallInteger, nullable=False, server_default="30"
+    )
+    is_active: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, server_default=sa.true())
+    # Added by migration 2 (SPEC 5.2)
+    pickup_shelves_count: Mapped[int] = mapped_column(
+        sa.SmallInteger, nullable=False, server_default="10"
+    )
+    order_cutoff_minutes: Mapped[int] = mapped_column(
+        sa.SmallInteger, nullable=False, server_default="15"
+    )
+    slug: Mapped[str | None] = mapped_column(sa.String(50), unique=True)
+
+    building: Mapped[Building] = relationship()
+
+
+class StudentGroup(Base):
+    __tablename__ = "student_groups"
+    __table_args__ = (sa.CheckConstraint("study_year BETWEEN 1 AND 6", name="study_year"),)
+
+    id: Mapped[int] = int_pk()
+    code: Mapped[str] = mapped_column(sa.String(20), nullable=False, unique=True)
+    faculty: Mapped[str | None] = mapped_column(sa.String(100))
+    study_year: Mapped[int | None] = mapped_column(sa.SmallInteger)
+
+
+class User(Base):
+    __tablename__ = "users"
+    __table_args__ = (
+        sa.CheckConstraint("preferred_language IN ('kk', 'ru', 'en')", name="preferred_language"),
+        sa.CheckConstraint("loyalty_points >= 0", name="loyalty_points"),
+        sa.CheckConstraint("role <> 'student' OR group_id IS NOT NULL", name="student_group"),
+        sa.CheckConstraint(
+            "role NOT IN ('cook', 'cashier', 'canteen_manager') OR canteen_id IS NOT NULL",
+            name="staff_canteen",
+        ),
+        sa.Index("idx_users_group", "group_id"),
+    )
+
+    id: Mapped[int] = int_pk()
+    full_name: Mapped[str] = mapped_column(sa.String(150), nullable=False)
+    email: Mapped[str] = mapped_column(sa.String(150), nullable=False, unique=True)
+    phone: Mapped[str | None] = mapped_column(sa.String(20), unique=True)
+    password_hash: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    role: Mapped[UserRole] = mapped_column(
+        user_role, nullable=False, server_default=UserRole.student.value
+    )
+    group_id: Mapped[int | None] = mapped_column(sa.ForeignKey("student_groups.id"))
+    canteen_id: Mapped[int | None] = mapped_column(sa.ForeignKey("canteens.id"))
+    preferred_language: Mapped[str] = mapped_column(sa.CHAR(2), nullable=False, server_default="ru")
+    telegram_chat_id: Mapped[int | None] = mapped_column(sa.BigInteger, unique=True)
+    health_data_consent_at: Mapped[datetime | None] = mapped_column(TimestampTZ)
+    loyalty_points: Mapped[int] = mapped_column(sa.Integer, nullable=False, server_default="0")
+    is_active: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, server_default=sa.true())
+    created_at: Mapped[datetime] = created_at_col()
+    # Added by migration 2 (SPEC 5.2)
+    email_verified_at: Mapped[datetime | None] = mapped_column(TimestampTZ)
+    # Added by migration 2: opt-out of promotional notifications (SPEC 7.11, 8.1)
+    marketing_opt_out: Mapped[bool] = mapped_column(
+        sa.Boolean, nullable=False, server_default=sa.false()
+    )
+
+    group: Mapped[StudentGroup | None] = relationship()
+    canteen: Mapped[Canteen | None] = relationship()
+
+
+class ClassSchedule(Base):
+    __tablename__ = "class_schedule"
+    __table_args__ = (
+        sa.CheckConstraint("day_of_week BETWEEN 1 AND 7", name="day_of_week"),
+        sa.CheckConstraint("starts_at < ends_at", name="times"),
+        sa.UniqueConstraint("group_id", "day_of_week", "starts_at"),
+        sa.Index("idx_schedule_group_day", "group_id", "day_of_week"),
+    )
+
+    id: Mapped[int] = int_pk()
+    group_id: Mapped[int] = mapped_column(
+        sa.ForeignKey("student_groups.id", ondelete="CASCADE"), nullable=False
+    )
+    day_of_week: Mapped[int] = mapped_column(sa.SmallInteger, nullable=False)
+    starts_at: Mapped[time] = mapped_column(sa.Time, nullable=False)
+    ends_at: Mapped[time] = mapped_column(sa.Time, nullable=False)
+    building_id: Mapped[int] = mapped_column(sa.ForeignKey("buildings.id"), nullable=False)
+    subject: Mapped[str | None] = mapped_column(sa.String(150))
