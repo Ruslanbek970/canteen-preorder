@@ -128,3 +128,18 @@ def auth(client: TestClient):
         return {"Authorization": f"Bearer {create_access_token(user)}"}
 
     return headers
+
+
+@pytest.fixture
+def freeze(monkeypatch: pytest.MonkeyPatch):
+    """freeze("2026-10-12 11:00") pins the app clock to that Asia/Almaty wall time."""
+    from datetime import datetime
+
+    from app.utils import time as clock
+
+    def _freeze(local: str):
+        moment = datetime.fromisoformat(local).replace(tzinfo=clock.local_tz())
+        monkeypatch.setattr(clock, "now_utc", lambda: moment.astimezone(clock.UTC))
+        return moment
+
+    return _freeze

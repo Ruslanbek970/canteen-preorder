@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routers import auth, health, me, reference
+from app.api.routers import auth, health, manager_catalog, me, menu, reference
 from app.config import get_settings
 from app.errors import install_error_handlers
 
@@ -25,7 +25,14 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     install_error_handlers(app)
-    for router in (health.router, auth.router, me.router, reference.router):
+    for router in (
+        health.router,
+        auth.router,
+        me.router,
+        reference.router,
+        menu.router,
+        manager_catalog.router,
+    ):
         app.include_router(router, prefix=API_PREFIX)
     return app
 
