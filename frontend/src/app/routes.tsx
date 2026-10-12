@@ -10,6 +10,8 @@ import { OnboardingPage } from '@/features/auth/OnboardingPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { VerifyEmailPage } from '@/features/auth/VerifyEmailPage';
 import { KitchenPage } from '@/features/kitchen/KitchenPage';
+import { KitchenWastePage } from '@/features/kitchen/KitchenWastePage';
+import { LabelsPage } from '@/features/kitchen/LabelsPage';
 import { CartPage } from '@/features/cart/CartPage';
 import { DishesPage } from '@/features/manager/DishesPage';
 import { IngredientsPage } from '@/features/manager/IngredientsPage';
@@ -69,6 +71,8 @@ export const routes: RouteObject[] = [
       { path: 'pay/mock/:paymentId', element: guard(<MockPaymentPage />, CUSTOMER) },
       // cook
       { path: 'kitchen', element: guard(<KitchenPage />, KITCHEN) },
+      { path: 'kitchen/waste', element: guard(<KitchenWastePage />, KITCHEN) },
+      { path: 'kitchen/labels', element: guard(<LabelsPage />, KITCHEN) },
       // cashier
       { path: 'pickup', element: guard(<PickupPage />, PICKUP) },
       { path: 'pos', element: guard(<PosPage />, PICKUP) },

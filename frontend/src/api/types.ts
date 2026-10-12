@@ -297,3 +297,71 @@ export interface PaymentInfo {
   url: string | null;
   fiscal_receipt_number: string | null;
 }
+
+export interface KitchenLine {
+  menu_item_id: number;
+  name: string;
+  quantity: number;
+}
+
+export interface KitchenOrder {
+  id: number;
+  order_number: string;
+  status: OrderStatus;
+  channel: Order['channel'];
+  pickup_slot_id: number | null;
+  pickup_shelf: number | null;
+  paid_at: string | null;
+  items: KitchenLine[];
+  allergy_flag: string | null;
+}
+
+export interface KitchenBoard {
+  canteen_id: number;
+  date: string;
+  slots: {
+    slot_id: number | null;
+    starts_at: string | null;
+    ends_at: string | null;
+    orders: KitchenOrder[];
+  }[];
+  counts: Record<'paid' | 'cooking' | 'ready', number>;
+}
+
+export interface PrepSummary {
+  canteen_id: number;
+  date: string;
+  slots: {
+    slot_id: number;
+    starts_at: string;
+    ends_at: string;
+    orders: number;
+    items: { name: string; quantity: number }[];
+  }[];
+}
+
+export interface KitchenLabel {
+  order_id: number;
+  order_number: string;
+  canteen_name: string;
+  service_date: string;
+  starts_at: string | null;
+  ends_at: string | null;
+  items: KitchenLine[];
+  allergy_flag: string | null;
+}
+
+export interface WasteRecord {
+  id: number;
+  menu_item_id: number;
+  dish_name: string;
+  portions: number;
+  reason: 'expired' | 'uncollected_order' | 'damaged' | 'other';
+  recorded_at: string;
+}
+
+export interface CloseDayResult {
+  date: string;
+  written_off: WasteRecord[];
+  kept: { name: string; quantity: number }[];
+}

@@ -136,7 +136,9 @@
     "capacity_below_booked": "The slot already has {{booked}} orders, capacity cannot be lower",
     "order_not_payable": "This order can no longer be paid",
     "payment_not_pending": "The payment has already been processed",
-    "payment_not_found": "Payment not found"
+    "payment_not_found": "Payment not found",
+    "waste_above_available": "You cannot write off more than is left",
+    "menu_item_not_found": "Dish not found on the menu"
   },
   "units": {
     "g": "g",
@@ -315,6 +317,54 @@
       "failed": "Payment declined",
       "refunded": "Refunded",
       "pending": "Awaiting payment"
+    }
+  },
+  "kitchen": {
+    "section": "Kitchen sections",
+    "tabs": {
+      "board": "Board",
+      "waste": "Write-offs"
+    },
+    "soundOn": "Turn sound on",
+    "soundOff": "Turn sound off",
+    "empty": "No paid orders for today yet.",
+    "prepTitle": "To prepare for the next slots",
+    "prepFor": "By {{time}} ({{count}} orders):",
+    "columns": {
+      "paid": "Paid",
+      "cooking": "Cooking",
+      "ready": "Ready"
+    },
+    "noSlot": "No slot",
+    "startSlot": "Start the whole slot",
+    "toCooking": "Start cooking",
+    "toReady": "Ready",
+    "shelf": "Shelf {{shelf}}",
+    "label": "Label",
+    "print": "Print",
+    "waste": {
+      "title": "Write off portions",
+      "dish": "Dish on today's menu",
+      "portions": "Portions",
+      "reason": "Reason",
+      "submit": "Write off",
+      "today": "Written off today",
+      "empty": "Nothing written off today.",
+      "reasons": {
+        "expired": "Expired",
+        "damaged": "Damaged",
+        "other": "Other",
+        "uncollected_order": "Order not picked up"
+      }
+    },
+    "closeDay": {
+      "title": "Close the day",
+      "hint": "Leftovers that do not keep until tomorrow (shelf life under 24 hours) are written off.",
+      "button": "Close the day",
+      "confirm": "Write off the leftovers and close the day?",
+      "nothing": "Nothing to write off.",
+      "done": "Written off: {{list}}.",
+      "kept": "Kept for tomorrow: {{list}}."
     }
   }
 }
