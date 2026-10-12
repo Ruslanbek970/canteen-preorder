@@ -36,6 +36,12 @@ def main() -> None:
             with SessionLocal() as db:
                 added = seed.ensure_demo_menu(db)
             log.info("demo seed skipped (data exists), %s demo menu items added", added)
+            # Fills past weekdays without orders, so the 8-week history keeps up with the date.
+            from ml import synthetic_history
+
+            with SessionLocal() as db:
+                days = synthetic_history.generate_for_active(db)
+            log.info("synthetic history: %s days added", days)
         else:
             seed.main()
     # The worker regenerates slots daily at 05:00; this covers a fresh start.

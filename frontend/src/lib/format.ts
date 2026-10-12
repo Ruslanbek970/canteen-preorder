@@ -44,3 +44,9 @@ export function addDays(isoDate: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
+
+/** Formats an ISO timestamp as `13.10 12:30` in the canteen time zone. */
+export function formatDayTime(iso: string | Date): string {
+  const date = typeof iso === 'string' ? new Date(iso) : iso;
+  return `${formatDay(todayLocal(date))} ${formatTime(date)}`;
+}

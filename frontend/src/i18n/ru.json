@@ -140,7 +140,12 @@
     "waste_above_available": "Нельзя списать больше, чем осталось",
     "menu_item_not_found": "Блюдо не найдено в меню",
     "order_not_ready": "Заказ ещё не готов",
-    "invalid_order_number": "Неверный номер заказа"
+    "invalid_order_number": "Неверный номер заказа",
+    "already_reviewed": "Эту позицию вы уже оценили",
+    "review_window_closed": "Оценить можно в течение 48 часов после получения",
+    "order_not_picked_up": "Оценить можно только полученный заказ",
+    "invalid_period": "Начало периода позже конца",
+    "period_too_long": "Период не длиннее года"
   },
   "units": {
     "g": "г",
@@ -190,7 +195,8 @@
       "menu": "Меню на дату",
       "dishes": "Блюда",
       "ingredients": "Ингредиенты",
-      "slots": "Слоты"
+      "slots": "Слоты",
+      "reports": "Отчёты"
     },
     "syntheticNote": "История продаж за прошлые недели синтетическая (сгенерирована для демо).",
     "dishes": {
@@ -243,6 +249,81 @@
       "state": "Состояние",
       "close": "Закрыть",
       "open": "Открыть"
+    },
+    "dashboard": {
+      "title": "Сегодня в столовой",
+      "today": "Данные за {{date}}, обновляются каждые 30 секунд.",
+      "toReports": "Все отчёты",
+      "orders": "Заказы",
+      "ordersHint": "предзаказ {{preorders}} · касса {{cashier}}",
+      "revenue": "Выручка",
+      "inWork": "В работе",
+      "pickedUp_one": "выдан {{count}}",
+      "pickedUp_few": "выдано {{count}}",
+      "pickedUp_many": "выдано {{count}}",
+      "pickedUp_other": "выдано {{count}}",
+      "noShow": "Не забрали",
+      "waste": "Списано",
+      "portions": "порций",
+      "promotions": "Скидки ждут решения",
+      "promotionsHint": "предложены системой",
+      "slotLoad": "Загрузка слотов",
+      "noSlots": "На сегодня слотов нет."
+    },
+    "reports": {
+      "title": "Отчёты",
+      "csv": "Скачать CSV",
+      "period": "Период",
+      "days_one": "{{count}} день",
+      "days_few": "{{count}} дня",
+      "days_many": "{{count}} дней",
+      "days_other": "{{count}} дней",
+      "from": "С",
+      "to": "По",
+      "tabs": {
+        "sales": "Продажи",
+        "waste": "Списания",
+        "peak": "Пиковые слоты",
+        "ratings": "Оценки"
+      },
+      "synthetic": "Данные до {{date}} включительно синтетические: история сгенерирована для демо (ml/synthetic_history.py).",
+      "empty": "За этот период данных нет.",
+      "revenue": "Выручка",
+      "orders": "Заказы",
+      "averageCheck": "Средний чек",
+      "preorderShare": "Доля предзаказа",
+      "revenueByDay": "Выручка и заказы по дням",
+      "byDish": "По блюдам",
+      "dish": "Блюдо",
+      "portions": "Порций",
+      "wasteTotal": "Списано порций",
+      "wastePerDay": "В среднем за день",
+      "wasteShare": "Доля от плана",
+      "wasteByDay": "Списания по дням и причинам",
+      "wasted": "Списано",
+      "planned": "План",
+      "daysWithOrders": "Дней с заказами",
+      "busiest": "Самые загруженные",
+      "noShowShare": "Не забрали",
+      "preordersPerDay": "Предзаказов в день",
+      "perSlot": "Предзаказы по слотам (в среднем за день)",
+      "ordersPerDay": "Заказов в день",
+      "byWeekday": "По дням недели",
+      "weekday": "День недели",
+      "weekdays": {
+        "1": "Понедельник",
+        "2": "Вторник",
+        "3": "Среда",
+        "4": "Четверг",
+        "5": "Пятница",
+        "6": "Суббота",
+        "7": "Воскресенье"
+      },
+      "reviews_one": "{{count}} отзыв",
+      "reviews_few": "{{count}} отзыва",
+      "reviews_many": "{{count}} отзывов",
+      "reviews_other": "{{count}} отзывов",
+      "distribution": "Распределение оценок"
     }
   },
   "cart": {
@@ -393,5 +474,18 @@
     "sell": "Продать",
     "sold": "Продано: {{number}}, {{total}}",
     "receipt": "чек {{number}}"
+  },
+  "reviews": {
+    "title": "Оцените блюда",
+    "until": "Оценить можно до {{time}}.",
+    "rate": "Оценить",
+    "stars_one": "{{count}} звезда",
+    "stars_few": "{{count}} звезды",
+    "stars_many": "{{count}} звёзд",
+    "stars_other": "{{count}} звёзд",
+    "comment": "Комментарий",
+    "commentPlaceholder": "Что понравилось или нет (необязательно)",
+    "send": "Отправить оценку",
+    "thanks": "спасибо за оценку"
   }
 }

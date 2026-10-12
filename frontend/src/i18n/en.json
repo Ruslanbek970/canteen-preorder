@@ -140,7 +140,12 @@
     "waste_above_available": "You cannot write off more than is left",
     "menu_item_not_found": "Dish not found on the menu",
     "order_not_ready": "The order is not ready yet",
-    "invalid_order_number": "Invalid order number"
+    "invalid_order_number": "Invalid order number",
+    "already_reviewed": "You have already rated this item",
+    "review_window_closed": "You can rate within 48 hours of pickup",
+    "order_not_picked_up": "Only a picked-up order can be rated",
+    "invalid_period": "The period starts after it ends",
+    "period_too_long": "The period must be at most a year"
   },
   "units": {
     "g": "g",
@@ -190,7 +195,8 @@
       "menu": "Menu by date",
       "dishes": "Dishes",
       "ingredients": "Ingredients",
-      "slots": "Slots"
+      "slots": "Slots",
+      "reports": "Reports"
     },
     "syntheticNote": "Past weeks' sales history is synthetic (generated for the demo).",
     "dishes": {
@@ -243,6 +249,81 @@
       "state": "State",
       "close": "Close",
       "open": "Open"
+    },
+    "dashboard": {
+      "title": "Today in the canteen",
+      "today": "Data for {{date}}, refreshed every 30 seconds.",
+      "toReports": "All reports",
+      "orders": "Orders",
+      "ordersHint": "pre-order {{preorders}} · till {{cashier}}",
+      "revenue": "Revenue",
+      "inWork": "In progress",
+      "pickedUp_one": "{{count}} picked up",
+      "pickedUp_few": "{{count}} picked up",
+      "pickedUp_many": "{{count}} picked up",
+      "pickedUp_other": "{{count}} picked up",
+      "noShow": "No-shows",
+      "waste": "Written off",
+      "portions": "portions",
+      "promotions": "Discounts to review",
+      "promotionsHint": "proposed by the system",
+      "slotLoad": "Slot load",
+      "noSlots": "No slots today."
+    },
+    "reports": {
+      "title": "Reports",
+      "csv": "Download CSV",
+      "period": "Period",
+      "days_one": "{{count}} day",
+      "days_few": "{{count}} days",
+      "days_many": "{{count}} days",
+      "days_other": "{{count}} days",
+      "from": "From",
+      "to": "To",
+      "tabs": {
+        "sales": "Sales",
+        "waste": "Waste",
+        "peak": "Peak slots",
+        "ratings": "Ratings"
+      },
+      "synthetic": "Data up to and including {{date}} is synthetic: the history was generated for the demo (ml/synthetic_history.py).",
+      "empty": "No data for this period.",
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "averageCheck": "Average check",
+      "preorderShare": "Pre-order share",
+      "revenueByDay": "Revenue and orders by day",
+      "byDish": "By dish",
+      "dish": "Dish",
+      "portions": "Portions",
+      "wasteTotal": "Portions written off",
+      "wastePerDay": "Per day on average",
+      "wasteShare": "Share of plan",
+      "wasteByDay": "Waste by day and reason",
+      "wasted": "Wasted",
+      "planned": "Planned",
+      "daysWithOrders": "Days with orders",
+      "busiest": "Busiest",
+      "noShowShare": "No-show rate",
+      "preordersPerDay": "Pre-orders per day",
+      "perSlot": "Pre-orders by slot (average per day)",
+      "ordersPerDay": "Orders per day",
+      "byWeekday": "By weekday",
+      "weekday": "Weekday",
+      "weekdays": {
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "7": "Sunday"
+      },
+      "reviews_one": "{{count}} review",
+      "reviews_few": "{{count}} reviews",
+      "reviews_many": "{{count}} reviews",
+      "reviews_other": "{{count}} reviews",
+      "distribution": "Rating distribution"
     }
   },
   "cart": {
@@ -393,5 +474,18 @@
     "sell": "Sell",
     "sold": "Sold: {{number}}, {{total}}",
     "receipt": "receipt {{number}}"
+  },
+  "reviews": {
+    "title": "Rate the dishes",
+    "until": "You can rate until {{time}}.",
+    "rate": "Rate",
+    "stars_one": "{{count}} star",
+    "stars_few": "{{count}} stars",
+    "stars_many": "{{count}} stars",
+    "stars_other": "{{count}} stars",
+    "comment": "Comment",
+    "commentPlaceholder": "What you liked or not (optional)",
+    "send": "Send rating",
+    "thanks": "thanks for rating"
   }
 }

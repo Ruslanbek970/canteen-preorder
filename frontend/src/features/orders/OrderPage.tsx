@@ -3,11 +3,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Alert, Button, Card, ErrorState, LoadingState } from '@/components/ui';
 import { useErrorMessage } from '@/components/ui/errors';
-import { formatClock, formatDay, formatPrice, formatTime } from '@/lib/format';
+import { formatClock, formatDay, formatDayTime, formatPrice, formatTime } from '@/lib/format';
 import { dishName } from '@/lib/names';
 
 import { useCancelOrder, useOrder, usePayOrder } from './api';
 import { OrderQr } from './OrderQr';
+import { ReviewForm } from './ReviewForm';
 import { StatusBadge } from './StatusBadge';
 import { useRepeat } from './useRepeat';
 
@@ -125,6 +126,20 @@ export function OrderPage() {
           </div>
         </dl>
       </Card>
+
+      {o.review_until && (
+        <Card className="mt-4">
+          <h2 className="font-semibold">{t('reviews.title')}</h2>
+          <p className="mb-3 text-sm text-slate-500">
+            {t('reviews.until', { time: `${formatDayTime(o.review_until)}` })}
+          </p>
+          <div className="space-y-4">
+            {o.items.map((item) => (
+              <ReviewForm key={item.id} item={item} />
+            ))}
+          </div>
+        </Card>
+      )}
 
       <ol className="mt-4 space-y-1 text-sm text-slate-500">
         <li>

@@ -32,6 +32,7 @@ from app.models import (
 from app.security import hash_password
 from app.services import slots
 from app.utils import time as clock
+from ml import synthetic_history
 
 log = logging.getLogger(__name__)
 
@@ -359,6 +360,7 @@ def run(db: Session) -> None:
         seed_menu(db, canteen, food["dishes"], day)  # type: ignore[arg-type]
     db.commit()
     slots.generate_for_active(db)
+    synthetic_history.generate(db, canteen)
 
 
 def ensure_demo_menu(db: Session) -> int:

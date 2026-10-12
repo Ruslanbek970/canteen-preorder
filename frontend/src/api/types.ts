@@ -234,6 +234,7 @@ export interface OrderItem {
   discount_amount: string;
   line_total: string;
   promotion_id: number | null;
+  my_rating: number | null;
 }
 
 export interface Order {
@@ -262,6 +263,7 @@ export interface Order {
   can_cancel: boolean;
   cancel_until: string | null;
   no_show_warning: boolean;
+  review_until: string | null;
 }
 
 export interface OrderList {
@@ -351,12 +353,14 @@ export interface KitchenLabel {
   allergy_flag: string | null;
 }
 
+export type WasteReason = 'expired' | 'uncollected_order' | 'damaged' | 'other';
+
 export interface WasteRecord {
   id: number;
   menu_item_id: number;
   dish_name: string;
   portions: number;
-  reason: 'expired' | 'uncollected_order' | 'damaged' | 'other';
+  reason: WasteReason;
   recorded_at: string;
 }
 
@@ -390,3 +394,90 @@ export interface PosReceipt {
   fiscal_receipt_number: string | null;
   items: KitchenLine[];
 }
+
+// ---- Manager reports (SPEC 8.8) ----------------------------------------
+
+export interface DashboardSlot {
+  id: number;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  booked: number;
+  is_closed: boolean;
+}
+
+export interface Dashboard {
+  date: string;
+  orders_total: number;
+  orders_by_status: Record<OrderStatus, number>;
+  preorders: number;
+  cashier_sales: number;
+  revenue: string;
+  portions_sold: number;
+  waste_portions: number;
+  waste_by_reason: Record<WasteReason, number>;
+  no_show: number;
+  no_show_percent: number | null;
+  proposed_promotions: number;
+  slots: DashboardSlot[];
+  synthetic_history_until: string | null;
+}
+
+interface ReportBase {
+  from_date: string;
+  to_date: string;
+  synthetic_history_until: string | null;
+}
+
+export interface SalesReport extends ReportBase {
+  totals: {
+    orders: number;
+    portions: number;
+    revenue: string;
+    average_check: string | null;
+    preorder_share: number | null;
+  };
+  days: {
+    date: string;
+    orders: number;
+    portions: number;
+    revenue: string;
+    preorder_share: number | null;
+  }[];
+  dishes: { dish_id: number; name: string; portions: number; revenue: string }[];
+}
+
+export interface WasteReport extends ReportBase {
+  total: number;
+  per_day: number | null;
+  percent_of_planned: number | null;
+  by_reason: Record<WasteReason, number>;
+  days: { date: string; portions: number; by_reason: Partial<Record<WasteReason, number>> }[];
+  dishes: {
+    dish_id: number;
+    name: string;
+    portions: number;
+    planned: number;
+    percent_of_planned: number | null;
+  }[];
+}
+
+export interface PeakReport extends ReportBase {
+  days: number;
+  no_show_percent: number | null;
+  slots: { starts_at: string; orders: number; per_day: number; load_percent: number | null }[];
+  weekdays: { weekday: number; orders: number; per_day: number }[];
+}
+
+export interface RatingsReport extends ReportBase {
+  dishes: {
+    dish_id: number;
+    name: string;
+    rating: number | null;
+    count: number;
+    distribution: number[];
+    last_comments: { rating: number; comment: string; created_at: string }[];
+  }[];
+}
+
+export type ReportName = 'sales' | 'waste' | 'peak-hours' | 'ratings';

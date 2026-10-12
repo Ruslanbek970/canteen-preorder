@@ -12,6 +12,8 @@ from app.api.routers import (
     payments,
     pickup,
     reference,
+    reports,
+    reviews,
     slots,
 )
 from app.config import get_settings
@@ -50,6 +52,8 @@ def create_app() -> FastAPI:
         payments.router,
         kitchen.router,
         pickup.router,
+        reviews.router,
+        reports.router,
     ):
         app.include_router(router, prefix=API_PREFIX)
     app.include_router(ws_routes.router)

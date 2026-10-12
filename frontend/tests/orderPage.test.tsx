@@ -42,6 +42,7 @@ function order(extra: Partial<Order> = {}): Order {
         discount_amount: '300.00',
         line_total: '2700.00',
         promotion_id: 3,
+        my_rating: null,
       },
     ],
     payment_id: 1,
@@ -50,6 +51,7 @@ function order(extra: Partial<Order> = {}): Order {
     can_cancel: true,
     cancel_until: null,
     no_show_warning: false,
+    review_until: null,
     ...extra,
   };
 }
@@ -135,5 +137,47 @@ describe('payment', () => {
     status = 'cooking';
     act(() => socket?.onmessage?.({ data: JSON.stringify({ type: 'order.status_changed' }) }));
     expect(await screen.findByText('Готовится')).toBeInTheDocument();
+  });
+});
+
+describe('reviews', () => {
+  it('rates a dish of a picked-up order', async () => {
+    const picked = order({
+      status: 'picked_up',
+      picked_up_at: '2026-10-12T06:05:00Z',
+      review_until: '2026-10-14T06:05:00Z',
+      can_cancel: false,
+    });
+    const fetchMock = mockApi({
+      '/me': makeMe('student'),
+      '/orders/42': picked,
+      '/order-items/1/review': { id: 1, order_item_id: 1, rating: 4, comment: 'Вкусно' },
+    });
+    renderApp('/orders/42', makeMe('student'));
+    expect(await screen.findByText('Оцените блюда')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '4 звезды' }));
+    fireEvent.change(screen.getByLabelText('Комментарий'), { target: { value: 'Вкусно' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Отправить оценку' }));
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/v1/order-items/1/review',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ rating: 4, comment: 'Вкусно' }),
+        }),
+      ),
+    );
+  });
+
+  it('shows the rating already given', async () => {
+    const base = order();
+    const rated = order({
+      status: 'picked_up',
+      review_until: '2026-10-14T06:05:00Z',
+      items: base.items.map((item) => ({ ...item, my_rating: 5 })),
+    });
+    mockApi({ '/me': makeMe('student'), '/orders/42': rated });
+    renderApp('/orders/42', makeMe('student'));
+    expect(await screen.findByText('спасибо за оценку')).toBeInTheDocument();
   });
 });

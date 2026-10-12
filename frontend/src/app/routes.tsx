@@ -1,9 +1,10 @@
-import type { ReactElement } from 'react';
+import { lazy, Suspense, type ReactElement } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
 import type { Role } from '@/api/types';
 
 import { PlaceholderPage } from '@/components/PlaceholderPage';
+import { LoadingState } from '@/components/ui';
 import { AdminPage } from '@/features/admin/AdminPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingPage } from '@/features/auth/OnboardingPage';
@@ -32,6 +33,11 @@ import { RedirectIfSignedIn, RequireRole } from './guards';
 import { HomePage } from './HomePage';
 import { Layout } from './Layout';
 import { ADMIN, CUSTOMER, KITCHEN, MANAGER, PICKUP } from './roles';
+
+// Charts are heavy: load the reports only for the people who open them.
+const ReportsPage = lazy(() =>
+  import('@/features/manager/ReportsPage').then((m) => ({ default: m.ReportsPage })),
+);
 
 const guard = (element: ReactElement, roles?: Role[]) => (
   <RequireRole roles={roles}>{element}</RequireRole>
@@ -78,6 +84,15 @@ export const routes: RouteObject[] = [
       { path: 'pos', element: guard(<PosPage />, PICKUP) },
       // canteen_manager
       { path: 'manager', element: guard(<ManagerDashboardPage />, MANAGER) },
+      {
+        path: 'manager/reports',
+        element: guard(
+          <Suspense fallback={<LoadingState />}>
+            <ReportsPage />
+          </Suspense>,
+          MANAGER,
+        ),
+      },
       { path: 'manager/menu', element: guard(<ManagerMenuPage />, MANAGER) },
       { path: 'manager/slots', element: guard(<ManagerSlotsPage />, MANAGER) },
       { path: 'manager/dishes', element: guard(<DishesPage />, MANAGER) },

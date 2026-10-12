@@ -50,7 +50,15 @@ export function OrdersPage() {
                 <p className="mt-2 truncate text-sm text-slate-600 dark:text-slate-300">
                   {order.items.map((i) => `${i.name_ru} × ${i.quantity}`).join(', ')}
                 </p>
-                <div className="mt-2 flex justify-end">
+                <div className="mt-2 flex justify-end gap-2">
+                  {order.review_until && order.items.some((i) => i.my_rating === null) && (
+                    <Link
+                      to={`/orders/${order.id}`}
+                      className="inline-flex min-h-[44px] items-center rounded-lg px-4 font-medium text-green-700 hover:bg-green-50"
+                    >
+                      {t('reviews.rate')}
+                    </Link>
+                  )}
                   <Button
                     variant="secondary"
                     disabled={repeat.isPending}

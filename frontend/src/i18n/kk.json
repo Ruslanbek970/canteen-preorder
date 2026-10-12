@@ -140,7 +140,12 @@
     "waste_above_available": "Қалғаннан көп есептен шығаруға болмайды",
     "menu_item_not_found": "Тағам мәзірден табылмады",
     "order_not_ready": "Тапсырыс әлі дайын емес",
-    "invalid_order_number": "Тапсырыс нөмірі қате"
+    "invalid_order_number": "Тапсырыс нөмірі қате",
+    "already_reviewed": "Бұл позицияны бағалағансыз",
+    "review_window_closed": "Алғаннан кейін 48 сағат ішінде бағалауға болады",
+    "order_not_picked_up": "Тек алынған тапсырысты бағалауға болады",
+    "invalid_period": "Кезеңнің басы соңынан кейін",
+    "period_too_long": "Кезең бір жылдан аспауы керек"
   },
   "units": {
     "g": "г",
@@ -190,7 +195,8 @@
       "menu": "Күнге мәзір",
       "dishes": "Тағамдар",
       "ingredients": "Ингредиенттер",
-      "slots": "Уақыт аралықтары"
+      "slots": "Уақыт аралықтары",
+      "reports": "Есептер"
     },
     "syntheticNote": "Өткен апталардағы сату тарихы синтетикалық (демо үшін жасалған).",
     "dishes": {
@@ -243,6 +249,81 @@
       "state": "Күйі",
       "close": "Жабу",
       "open": "Ашу"
+    },
+    "dashboard": {
+      "title": "Бүгін асханада",
+      "today": "{{date}} деректері, әр 30 секунд сайын жаңарады.",
+      "toReports": "Барлық есептер",
+      "orders": "Тапсырыстар",
+      "ordersHint": "алдын ала {{preorders}} · касса {{cashier}}",
+      "revenue": "Түсім",
+      "inWork": "Жұмыста",
+      "pickedUp_one": "берілді {{count}}",
+      "pickedUp_few": "берілді {{count}}",
+      "pickedUp_many": "берілді {{count}}",
+      "pickedUp_other": "берілді {{count}}",
+      "noShow": "Алмады",
+      "waste": "Есептен шығарылды",
+      "portions": "порция",
+      "promotions": "Шешім күтетін жеңілдіктер",
+      "promotionsHint": "жүйе ұсынған",
+      "slotLoad": "Слоттардың толуы",
+      "noSlots": "Бүгінге слот жоқ."
+    },
+    "reports": {
+      "title": "Есептер",
+      "csv": "CSV жүктеу",
+      "period": "Кезең",
+      "days_one": "{{count}} күн",
+      "days_few": "{{count}} күн",
+      "days_many": "{{count}} күн",
+      "days_other": "{{count}} күн",
+      "from": "Бастап",
+      "to": "Дейін",
+      "tabs": {
+        "sales": "Сату",
+        "waste": "Есептен шығару",
+        "peak": "Ең көп слоттар",
+        "ratings": "Бағалар"
+      },
+      "synthetic": "{{date}} қоса алғандағы деректер синтетикалық: тарих демо үшін жасалған (ml/synthetic_history.py).",
+      "empty": "Бұл кезеңде деректер жоқ.",
+      "revenue": "Түсім",
+      "orders": "Тапсырыстар",
+      "averageCheck": "Орташа чек",
+      "preorderShare": "Алдын ала тапсырыс үлесі",
+      "revenueByDay": "Күндер бойынша түсім мен тапсырыстар",
+      "byDish": "Тағамдар бойынша",
+      "dish": "Тағам",
+      "portions": "Порция",
+      "wasteTotal": "Есептен шығарылған порция",
+      "wastePerDay": "Күніне орта есеппен",
+      "wasteShare": "Жоспардан үлесі",
+      "wasteByDay": "Күндер мен себептер бойынша есептен шығару",
+      "wasted": "Шығарылды",
+      "planned": "Жоспар",
+      "daysWithOrders": "Тапсырыс болған күндер",
+      "busiest": "Ең көп жүктелген",
+      "noShowShare": "Алмағандар",
+      "preordersPerDay": "Күніне алдын ала тапсырыс",
+      "perSlot": "Слоттар бойынша алдын ала тапсырыстар (күніне орташа)",
+      "ordersPerDay": "Күніне тапсырыс",
+      "byWeekday": "Апта күндері бойынша",
+      "weekday": "Апта күні",
+      "weekdays": {
+        "1": "Дүйсенбі",
+        "2": "Сейсенбі",
+        "3": "Сәрсенбі",
+        "4": "Бейсенбі",
+        "5": "Жұма",
+        "6": "Сенбі",
+        "7": "Жексенбі"
+      },
+      "reviews_one": "{{count}} пікір",
+      "reviews_few": "{{count}} пікір",
+      "reviews_many": "{{count}} пікір",
+      "reviews_other": "{{count}} пікір",
+      "distribution": "Бағалардың бөлінуі"
     }
   },
   "cart": {
@@ -393,5 +474,18 @@
     "sell": "Сату",
     "sold": "Сатылды: {{number}}, {{total}}",
     "receipt": "чек {{number}}"
+  },
+  "reviews": {
+    "title": "Тағамдарды бағалаңыз",
+    "until": "{{time}} дейін бағалауға болады.",
+    "rate": "Бағалау",
+    "stars_one": "{{count}} жұлдыз",
+    "stars_few": "{{count}} жұлдыз",
+    "stars_many": "{{count}} жұлдыз",
+    "stars_other": "{{count}} жұлдыз",
+    "comment": "Пікір",
+    "commentPlaceholder": "Не ұнады, не ұнамады (міндетті емес)",
+    "send": "Бағаны жіберу",
+    "thanks": "бағаңызға рахмет"
   }
 }

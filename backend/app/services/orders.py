@@ -37,7 +37,7 @@ from app.schemas.orders import (
 )
 from app.services import allergens as allergy
 from app.services import menu as menu_service
-from app.services import payments, pricing, slots, users
+from app.services import payments, pricing, reviews, slots, users
 from app.services.order_status import Actor, change_status
 from app.utils import time as clock
 from app.ws import events
@@ -314,6 +314,7 @@ def order_out(db: Session, order: Order) -> OrderOut:
     )
     pending = payment is not None and payment.status == PaymentStatus.pending
     slot = order.pickup_slot
+    rated = reviews.ratings_for_items(db, [i.id for i in order.items])
     return OrderOut(
         id=order.id,
         order_number=order.order_number,
@@ -349,6 +350,7 @@ def order_out(db: Session, order: Order) -> OrderOut:
                 discount_amount=i.discount_amount,
                 line_total=i.unit_price * i.quantity - i.discount_amount,
                 promotion_id=i.promotion_id,
+                my_rating=rated.get(i.id),
             )
             for i in order.items
         ],
@@ -361,6 +363,7 @@ def order_out(db: Session, order: Order) -> OrderOut:
         else None,
         can_cancel=can_cancel(order),
         cancel_until=cancel_deadline(order) if order.status == OrderStatus.paid else None,
+        review_until=reviews.review_until(order),
     )
 
 

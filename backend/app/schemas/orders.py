@@ -30,6 +30,7 @@ class OrderItemOut(BaseModel):
     discount_amount: Decimal
     line_total: Decimal
     promotion_id: int | None
+    my_rating: int | None = None
 
 
 class OrderSlotOut(BaseModel):
@@ -65,6 +66,7 @@ class OrderOut(BaseModel):
     can_cancel: bool = False
     cancel_until: datetime | None = None
     no_show_warning: bool = False
+    review_until: datetime | None = None
 
 
 class OrderList(BaseModel):
