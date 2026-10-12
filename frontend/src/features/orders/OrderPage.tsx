@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Alert, Button, Card, ErrorState, LoadingState } from '@/components/ui';
 import { useErrorMessage } from '@/components/ui/errors';
 import { formatClock, formatDay, formatPrice, formatTime } from '@/lib/format';
 import { dishName } from '@/lib/names';
 
-import { useCancelOrder, useOrder } from './api';
+import { useCancelOrder, useOrder, usePayOrder } from './api';
+import { OrderQr } from './OrderQr';
 import { StatusBadge } from './StatusBadge';
 import { useRepeat } from './useRepeat';
 
@@ -16,6 +17,8 @@ export function OrderPage() {
   const order = useOrder(id);
   const cancel = useCancelOrder();
   const repeat = useRepeat();
+  const pay = usePayOrder();
+  const navigate = useNavigate();
   const errorMessage = useErrorMessage();
 
   if (order.isPending) return <LoadingState />;
@@ -48,11 +51,48 @@ export function OrderPage() {
 
       <div className="mt-3 space-y-2">
         {o.no_show_warning && <Alert tone="warning">{t('orders.noShowWarning')}</Alert>}
-        {o.status === 'pending_payment' && <Alert tone="info">{t('orders.awaitingPayment')}</Alert>}
+        {o.status === 'pending_payment' && (
+          <Alert tone="info">
+            {o.pay_until
+              ? t('orders.payUntil', { time: formatTime(o.pay_until) })
+              : t('orders.awaitingPayment')}
+          </Alert>
+        )}
         {o.status === 'ready' && o.pickup_shelf !== null && (
           <Alert tone="success">{t('orders.readyOnShelf', { shelf: o.pickup_shelf })}</Alert>
         )}
       </div>
+
+      {o.status === 'pending_payment' && (
+        <div className="mt-4">
+          {o.payment_url ? (
+            <Link
+              to={o.payment_url}
+              className="flex min-h-[48px] w-full items-center justify-center rounded-lg bg-green-600 px-4 font-medium text-white"
+            >
+              {t('orders.pay', { total: formatPrice(o.total) })}
+            </Link>
+          ) : (
+            <Button
+              className="w-full"
+              disabled={pay.isPending}
+              onClick={() => pay.mutate(o.id, { onSuccess: (p) => p.url && navigate(p.url) })}
+            >
+              {t('orders.payAgain', { total: formatPrice(o.total) })}
+            </Button>
+          )}
+          {pay.isError && (
+            <div className="mt-2">
+              <Alert tone="error">{errorMessage(pay.error)}</Alert>
+            </div>
+          )}
+        </div>
+      )}
+      {['paid', 'cooking', 'ready'].includes(o.status) && (
+        <Card className="mt-4">
+          <OrderQr token={o.qr_token} />
+        </Card>
+      )}
 
       <Card className="mt-4">
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">

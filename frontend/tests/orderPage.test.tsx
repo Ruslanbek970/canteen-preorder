@@ -1,7 +1,8 @@
-import { screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import type { Order } from '@/api/types';
 
+import { FakeWebSocket } from './setup';
 import { makeMe, mockApi, renderApp } from './utils';
 
 afterEach(() => {
@@ -45,6 +46,7 @@ function order(extra: Partial<Order> = {}): Order {
     ],
     payment_id: 1,
     payment_url: null,
+    pay_until: null,
     can_cancel: true,
     cancel_until: null,
     no_show_warning: false,
@@ -76,5 +78,62 @@ describe('orders', () => {
     renderApp('/orders', makeMe('student'));
     expect(await screen.findByText('A-007')).toBeInTheDocument();
     expect(screen.getByText('Готов')).toBeInTheDocument();
+  });
+});
+
+describe('payment', () => {
+  it('pending order links to the mock payment page', async () => {
+    mockApi({
+      '/me': makeMe('student'),
+      '/orders/42': order({ payment_url: '/pay/mock/1', pay_until: '2026-10-12T04:10:00Z' }),
+    });
+    renderApp('/orders/42', makeMe('student'));
+    const link = await screen.findByRole('link', { name: /Оплатить 2\s700/ });
+    expect(link).toHaveAttribute('href', '/pay/mock/1');
+    expect(screen.getByText(/Оплатите до 09:10/)).toBeInTheDocument();
+  });
+
+  it('paid order shows the QR code instead of the pay button', async () => {
+    mockApi({ '/me': makeMe('student'), '/orders/42': order({ status: 'paid' }) });
+    renderApp('/orders/42', makeMe('student'));
+    expect(await screen.findByRole('img', { name: 'QR-код заказа' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Оплатить/ })).not.toBeInTheDocument();
+  });
+
+  it('mock page confirms and returns to the order', async () => {
+    const fetchMock = mockApi({
+      '/me': makeMe('student'),
+      '/payments/mock/1/confirm': { id: 1, order_id: 42, status: 'succeeded' },
+      '/payments/1': {
+        id: 1,
+        order_id: 42,
+        order_number: 'A-007',
+        canteen_name: 'Главная столовая',
+        method: 'kaspi_qr',
+        amount: '2700.00',
+        status: 'pending',
+        url: '/pay/mock/1',
+        fiscal_receipt_number: null,
+      },
+      '/orders/42': order({ status: 'paid' }),
+    });
+    const router = renderApp('/pay/mock/1', makeMe('student'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Оплатить' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/orders/42'));
+    expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith('/mock/1/confirm'))).toBe(
+      true,
+    );
+  });
+
+  it('a status event over /ws/me refetches the order', async () => {
+    let status = 'pending_payment';
+    mockApi({ '/me': makeMe('student'), '/orders/42': () => order({ status } as Partial<Order>) });
+    renderApp('/orders/42', makeMe('student'));
+    expect(await screen.findByText('Ждёт оплаты')).toBeInTheDocument();
+    const socket = FakeWebSocket.instances.at(-1);
+    expect(socket?.url).toContain('/ws/me?token=token');
+    status = 'cooking';
+    act(() => socket?.onmessage?.({ data: JSON.stringify({ type: 'order.status_changed' }) }));
+    expect(await screen.findByText('Готовится')).toBeInTheDocument();
   });
 });

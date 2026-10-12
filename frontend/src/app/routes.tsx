@@ -21,6 +21,7 @@ import { MenuPage } from '@/features/menu/MenuPage';
 import { PublicCanteenPage } from '@/features/menu/PublicCanteenPage';
 import { OrderPage } from '@/features/orders/OrderPage';
 import { OrdersPage } from '@/features/orders/OrdersPage';
+import { MockPaymentPage } from '@/features/payments/MockPaymentPage';
 import { PickupPage } from '@/features/pickup/PickupPage';
 import { PosPage } from '@/features/pos/PosPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
@@ -65,6 +66,7 @@ export const routes: RouteObject[] = [
       { path: 'cart', element: guard(<CartPage />, CUSTOMER) },
       { path: 'orders', element: guard(<OrdersPage />, CUSTOMER) },
       { path: 'orders/:id', element: guard(<OrderPage />, CUSTOMER) },
+      { path: 'pay/mock/:paymentId', element: guard(<MockPaymentPage />, CUSTOMER) },
       // cook
       { path: 'kitchen', element: guard(<KitchenPage />, KITCHEN) },
       // cashier

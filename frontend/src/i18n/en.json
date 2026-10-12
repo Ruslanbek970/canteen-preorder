@@ -133,7 +133,10 @@
     "invalid_transition": "This action is not available for the order now",
     "status_changed": "The order status has changed, refresh the page",
     "order_not_found": "Order not found",
-    "capacity_below_booked": "The slot already has {{booked}} orders, capacity cannot be lower"
+    "capacity_below_booked": "The slot already has {{booked}} orders, capacity cannot be lower",
+    "order_not_payable": "This order can no longer be paid",
+    "payment_not_pending": "The payment has already been processed",
+    "payment_not_found": "Payment not found"
   },
   "units": {
     "g": "g",
@@ -294,6 +297,24 @@
       "picked_up": "Picked up",
       "cancelled": "Cancelled",
       "no_show": "Not picked up"
+    },
+    "pay": "Pay {{total}}",
+    "payAgain": "Try paying again · {{total}}",
+    "payUntil": "Pay by {{time}}, otherwise the order is cancelled and the portions go back to the menu.",
+    "qrLabel": "Order QR code",
+    "qrHint": "Show this QR code at pickup"
+  },
+  "payment": {
+    "mockTitle": "Test payment",
+    "pay": "Pay",
+    "decline": "Decline",
+    "mockNote": "This imitates a payment system; no real money is charged.",
+    "backToOrder": "Back to the order",
+    "status": {
+      "succeeded": "Payment succeeded",
+      "failed": "Payment declined",
+      "refunded": "Refunded",
+      "pending": "Awaiting payment"
     }
   }
 }

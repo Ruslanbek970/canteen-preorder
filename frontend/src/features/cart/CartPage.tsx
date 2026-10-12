@@ -66,7 +66,7 @@ export function CartPage() {
       {
         onSuccess: (order) => {
           clear();
-          navigate(`/orders/${order.id}`, { state: { justCreated: true } });
+          navigate(order.payment_url ?? `/orders/${order.id}`);
         },
         onError: (error) => {
           if (error instanceof ApiError && error.code === 'slot_unavailable') setSlot(null);

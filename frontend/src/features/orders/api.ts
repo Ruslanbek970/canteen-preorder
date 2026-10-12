@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { apiGet, apiPost, qs } from '@/api/client';
-import type { Order, OrderList, RepeatResponse, SlotsResponse } from '@/api/types';
+import type { Order, OrderList, PaymentInfo, RepeatResponse, SlotsResponse } from '@/api/types';
 
 export const ORDERS_KEY = ['orders'] as const;
 
@@ -65,5 +65,11 @@ export function useCancelOrder() {
 export function useRepeatOrder() {
   return useMutation({
     mutationFn: (id: number) => apiPost<RepeatResponse>(`/orders/${id}/repeat`),
+  });
+}
+
+export function usePayOrder() {
+  return useMutation({
+    mutationFn: (id: number) => apiPost<PaymentInfo>(`/orders/${id}/pay`),
   });
 }

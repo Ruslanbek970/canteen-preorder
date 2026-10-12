@@ -258,6 +258,7 @@ export interface Order {
   items: OrderItem[];
   payment_id: number | null;
   payment_url: string | null;
+  pay_until: string | null;
   can_cancel: boolean;
   cancel_until: string | null;
   no_show_warning: boolean;
@@ -283,4 +284,16 @@ export interface RepeatResponse {
     warning_for_me: boolean;
   }[];
   skipped: { dish_id: number; name_ru: string; reason: 'not_on_menu' | 'sold_out' | 'allergy' }[];
+}
+
+export interface PaymentInfo {
+  id: number;
+  order_id: number;
+  order_number: string;
+  canteen_name: string;
+  method: 'kaspi_qr' | 'bank_card' | 'cash';
+  amount: string;
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded';
+  url: string | null;
+  fiscal_receipt_number: string | null;
 }

@@ -5,6 +5,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuthStore } from '@/features/auth/store';
 import { useLogout, useMe } from '@/features/auth/useMe';
 import { cartCount, useCartStore } from '@/features/cart/store';
+import { useLiveOrders } from '@/features/orders/useLiveOrders';
 
 import { NAV } from './nav';
 
@@ -16,6 +17,7 @@ export function Layout() {
   const navigate = useNavigate();
   const items = token && me.data ? NAV[me.data.role] : [];
   const inCart = useCartStore((s) => cartCount(s.lines));
+  useLiveOrders(me.data?.role === 'student' || me.data?.role === 'teacher');
 
   return (
     <div className="flex min-h-screen flex-col">
