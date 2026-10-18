@@ -29,7 +29,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition duration-150 motion-safe:active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );
@@ -57,7 +57,10 @@ export function Field({
 }
 
 const INPUT =
-  'block rounded-lg border border-slate-300 bg-white px-3 py-2 text-base focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30 dark:border-slate-700 dark:bg-slate-900';
+  'block min-h-[44px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-base transition-colors placeholder:text-slate-500 hover:border-slate-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-600/15 dark:border-slate-700 dark:bg-slate-900';
+
+// `select-chevron` (index.css) draws the arrow, so selects match the inputs on every system.
+const SELECT = 'select-chevron';
 
 const widthOf = (className: string) => (/(^|\s)w-/.test(className) ? '' : 'w-full');
 
@@ -66,23 +69,25 @@ export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInpu
 }
 
 export function Select({ className = '', ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={`${INPUT} ${widthOf(className)} ${className}`} {...props} />;
+  return <select className={`${INPUT} ${SELECT} ${widthOf(className)} ${className}`} {...props} />;
 }
 
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
-      className={`rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04)] dark:border-slate-800 dark:bg-slate-900 ${className}`}
+      className={`rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.12)] dark:border-slate-800 dark:bg-slate-900 ${className}`}
     >
       {children}
     </div>
   );
 }
 
-export function Spinner() {
+export function Spinner({ light = false }: { light?: boolean }) {
   return (
     <span
-      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-600"
+      className={`inline-block h-5 w-5 animate-spin rounded-full border-2 ${
+        light ? 'border-white/40 border-t-white' : 'border-slate-300 border-t-brand-600'
+      }`}
       aria-hidden
     />
   );

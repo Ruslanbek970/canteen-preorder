@@ -5,6 +5,7 @@ import type { Role } from '@/api/types';
 
 import { PlaceholderPage } from '@/components/PlaceholderPage';
 import { LoadingState } from '@/components/ui';
+import { AuthLayout } from '@/features/auth/AuthLayout';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingPage } from '@/features/auth/OnboardingPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
@@ -97,14 +98,19 @@ export const routes: RouteObject[] = [
         ),
       },
       {
-        path: 'login',
-        element: (
-          <RedirectIfSignedIn>
-            <LoginPage />
-          </RedirectIfSignedIn>
-        ),
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            element: (
+              <RedirectIfSignedIn>
+                <LoginPage />
+              </RedirectIfSignedIn>
+            ),
+          },
+          { path: 'register', element: <RegisterPage /> },
+        ],
       },
-      { path: 'register', element: <RegisterPage /> },
       { path: 'verify', element: <VerifyEmailPage /> },
       { path: 'c/:slug', element: <PublicCanteenPage /> },
       { path: 'dishes/:id', element: <DishPage /> },
