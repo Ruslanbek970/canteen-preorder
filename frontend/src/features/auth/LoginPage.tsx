@@ -2,7 +2,7 @@ import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { Alert, Button, Card, Field, Input } from '@/components/ui';
+import { Alert, Button, Field, Input, Spinner } from '@/components/ui';
 import { useErrorMessage } from '@/components/ui/errors';
 
 import { homeFor, useLogin } from './useMe';
@@ -37,41 +37,47 @@ export function LoginPage() {
   }
 
   return (
-    <section className="mx-auto max-w-sm p-4">
-      <h1 className="mb-4 text-2xl font-semibold">{t('auth.loginTitle')}</h1>
-      <Card>
-        <form className="space-y-4" onSubmit={onSubmit}>
-          {error !== null && <Alert>{errorMessage(error)}</Alert>}
-          <Field label={t('auth.email')}>
-            <Input
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Field>
-          <Field label={t('auth.password')}>
-            <Input
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Field>
-          <Button type="submit" className="w-full" disabled={busy}>
-            {t('auth.login')}
-          </Button>
-        </form>
-      </Card>
-      <p className="mt-4 text-center text-sm">
+    <div className="mx-auto w-full max-w-sm">
+      <h1 className="text-3xl font-bold tracking-tight">{t('auth.loginTitle')}</h1>
+      <p className="mt-1 text-slate-600">{t('auth.loginSubtitle')}</p>
+      <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+        {error !== null && <Alert>{errorMessage(error)}</Alert>}
+        <Field label={t('auth.email')}>
+          <Input
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
+        <Field label={t('auth.password')}>
+          <Input
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Field>
+        <Button
+          type="submit"
+          className="w-full !rounded-full uppercase tracking-wider"
+          disabled={busy}
+        >
+          {busy && <Spinner light />}
+          {t('auth.login')}
+        </Button>
+      </form>
+      <p className="mt-5 text-center text-sm md:hidden">
         {t('auth.noAccount')}{' '}
-        <Link className="text-brand-700 underline dark:text-brand-400" to="/register">
+        <Link className="font-medium text-brand-700 underline" to="/register">
           {t('auth.register')}
         </Link>
       </p>
-      <p className="mt-2 text-center text-xs text-slate-500">{t('auth.demoHint')}</p>
-    </section>
+      <p className="mt-6 rounded-xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-600 ring-1 ring-slate-200">
+        {t('auth.demoHint')}
+      </p>
+    </div>
   );
 }

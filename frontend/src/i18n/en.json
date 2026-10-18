@@ -82,7 +82,13 @@
     "code": "Code from the e-mail",
     "verify": "Confirm",
     "resend": "Send the code again",
-    "codeResent": "A new code has been sent"
+    "codeResent": "A new code has been sent",
+    "loginSubtitle": "Good to see you again",
+    "registerSubtitle": "Takes less than a minute",
+    "welcomeBack": "Welcome back!",
+    "welcomeBackText": "Already have an account? Sign in and order lunch before the break.",
+    "helloNew": "New here?",
+    "helloNewText": "Create an account with your university email and pick up lunch without the queue."
   },
   "onboarding": {
     "title": "Welcome!",
@@ -285,7 +291,10 @@
       "sold": "Ordered",
       "available": "Left",
       "addDish": "Add a dish from the catalog",
-      "save": "Save menu"
+      "save": "Save menu",
+      "chooseDish": "Choose a dish",
+      "allDishesInMenu": "All active catalog dishes are already on this day’s menu.",
+      "newDish": "Add a new dish to the catalog"
     },
     "slots": {
       "title": "Pickup slots",

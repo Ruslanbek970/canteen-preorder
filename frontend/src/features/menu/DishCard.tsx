@@ -13,7 +13,7 @@ export function DishCard({ item, action }: { item: MenuItem; action?: ReactNode 
   const soldOut = item.available_portions === 0;
   return (
     <article
-      className={`flex flex-col rounded-xl border bg-white p-4 shadow-sm dark:bg-slate-900 ${
+      className={`flex flex-col rounded-2xl border bg-white p-4 shadow-sm transition duration-200 hover:shadow-lg motion-safe:hover:-translate-y-0.5 dark:bg-slate-900 ${
         item.unsafe_for_me
           ? 'border-red-400 ring-1 ring-red-300 dark:border-red-700'
           : 'border-slate-200 dark:border-slate-800'

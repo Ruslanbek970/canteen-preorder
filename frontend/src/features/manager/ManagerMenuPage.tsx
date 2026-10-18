@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import { apiGet, apiPatch, apiPut, qs } from '@/api/client';
 import type { ManagerDish, ManagerMenu } from '@/api/types';
@@ -217,19 +218,32 @@ function MenuEditor({ date, menu }: { date: string; menu: ManagerMenu }) {
         )}
       </Card>
       <div className="flex flex-wrap items-end gap-2">
-        <Field label={t('manager.menu.addDish')}>
-          <Select value={toAdd} onChange={(e) => setToAdd(e.target.value)}>
-            <option value="">—</option>
-            {candidates.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name_ru}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Button variant="secondary" onClick={addDish} disabled={!toAdd}>
-          {t('common.add')}
-        </Button>
+        {candidates.length > 0 ? (
+          <>
+            <Field label={t('manager.menu.addDish')}>
+              <Select value={toAdd} onChange={(e) => setToAdd(e.target.value)}>
+                <option value="">{t('manager.menu.chooseDish')}</option>
+                {candidates.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name_ru}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Button variant="secondary" onClick={addDish} disabled={!toAdd}>
+              {t('common.add')}
+            </Button>
+          </>
+        ) : (
+          dishes.isSuccess && (
+            <p className="text-sm text-slate-600">
+              {t('manager.menu.allDishesInMenu')}{' '}
+              <Link to="/manager/dishes" className="font-medium text-brand-700 underline">
+                {t('manager.menu.newDish')}
+              </Link>
+            </p>
+          )
+        )}
         <Button className="ml-auto" onClick={() => save.mutate()} disabled={save.isPending}>
           {t('manager.menu.save')}
         </Button>

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { OfflineBanner } from '@/components/OfflineBanner';
@@ -17,6 +17,8 @@ export function Layout() {
   const me = useMe();
   const logout = useLogout();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const auth = pathname === '/login' || pathname === '/register';
   const items = token && me.data ? NAV[me.data.role] : [];
   const inCart = useCartStore((s) => cartCount(s.lines));
   const customer = me.data?.role === 'student' || me.data?.role === 'teacher';
@@ -27,7 +29,7 @@ export function Layout() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:p-2">
         {t('nav.skipToContent')}
       </a>
-      <header className="on-brand sticky top-0 z-20 bg-brand-600 text-white shadow-md dark:bg-brand-800">
+      <header className="on-brand sticky top-0 z-20 bg-gradient-to-r from-brand-600 to-brand-700 text-white shadow-[0_6px_20px_-8px_rgba(118,8,35,0.5)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2.5">
           <Link to="/" className="flex min-w-0 items-center gap-2 font-bold tracking-tight">
             <BrandMark />
@@ -44,7 +46,7 @@ export function Layout() {
               >
                 {t('auth.logout')}
               </button>
-            ) : (
+            ) : auth ? null : (
               <Link
                 to="/login"
                 className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50"
@@ -84,7 +86,10 @@ export function Layout() {
         <OfflineBanner />
       </header>
       <main id="main" className="mx-auto w-full max-w-6xl flex-1">
-        <Outlet />
+        {/* Re-keyed per page so every screen fades in; sign-in and sign-up animate themselves. */}
+        <div key={auth ? 'auth' : pathname} className="motion-safe:animate-fade-up">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
