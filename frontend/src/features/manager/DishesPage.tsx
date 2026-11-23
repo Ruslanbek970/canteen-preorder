@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type FormEvent, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { apiGet, apiPatch, apiPost } from '@/api/client';
+import { apiDelete, apiGet, apiPatch, apiPost } from '@/api/client';
 import type { Category, Ingredient, ManagerDish } from '@/api/types';
 import {
   Alert,
@@ -31,6 +31,15 @@ export function DishesPage() {
     queryFn: () => apiGet<ManagerDish[]>('/manager/dishes'),
   });
   const [editing, setEditing] = useState<ManagerDish | 'new' | null>(null);
+  const queryClient = useQueryClient();
+  const errorMessage = useErrorMessage();
+  const remove = useMutation({
+    mutationFn: (id: number) => apiDelete<void>(`/manager/dishes/${id}`),
+    onSuccess: () => {
+      setEditing(null);
+      void queryClient.invalidateQueries({ queryKey: DISHES_KEY });
+    },
+  });
 
   return (
     <ManagerShell
@@ -44,6 +53,8 @@ export function DishesPage() {
           onDone={() => setEditing(null)}
         />
       )}
+      {remove.isError && <Alert>{errorMessage(remove.error)}</Alert>}
+      {remove.isSuccess && <Alert tone="success">{t('common.deleted')}</Alert>}
       <Card className="overflow-x-auto p-0">
         {dishes.isPending ? (
           <LoadingState />
@@ -84,9 +95,21 @@ export function DishesPage() {
                       ))}
                     </div>
                   </td>
-                  <td className="p-2 text-right">
+                  <td className="whitespace-nowrap p-2 text-right">
                     <Button variant="ghost" onClick={() => setEditing(d)}>
                       {t('common.edit')}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="text-red-700"
+                      aria-label={`${t('common.delete')}: ${d.name_ru}`}
+                      disabled={remove.isPending}
+                      onClick={() => {
+                        if (window.confirm(t('manager.dishes.deleteConfirm', { name: d.name_ru })))
+                          remove.mutate(d.id);
+                      }}
+                    >
+                      {t('common.delete')}
                     </Button>
                   </td>
                 </tr>

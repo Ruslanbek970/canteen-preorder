@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { apiGet, apiPatch, apiPut, qs } from '@/api/client';
+import { apiDelete, apiGet, apiPatch, apiPut, qs } from '@/api/client';
 import type { ManagerDish, ManagerMenu } from '@/api/types';
 import {
   Alert,
@@ -111,6 +111,15 @@ function MenuEditor({ date, menu }: { date: string; menu: ManagerMenu }) {
       apiPatch<ManagerMenu>(`/manager/menu-items/${id}`, { available_portions: available }),
     onSuccess: (data) => queryClient.setQueryData(key, data),
   });
+  const removeItem = useMutation({
+    mutationFn: ({ id }: { id: number; dishId: number }) =>
+      apiDelete<ManagerMenu>(`/manager/menu-items/${id}`),
+    onSuccess: (data, { dishId }) => {
+      queryClient.setQueryData(key, data);
+      setRows((current) => current.filter((x) => x.dish_id !== dishId));
+      void queryClient.invalidateQueries({ queryKey: ['menu'] });
+    },
+  });
 
   const inMenu = new Set(rows.map((r) => r.dish_id));
   const candidates = (dishes.data ?? []).filter((d) => d.is_active && !inMenu.has(d.id));
@@ -142,6 +151,8 @@ function MenuEditor({ date, menu }: { date: string; menu: ManagerMenu }) {
     <div className="space-y-4">
       {save.isError && <Alert>{errorMessage(save.error)}</Alert>}
       {adjust.isError && <Alert>{errorMessage(adjust.error)}</Alert>}
+      {removeItem.isError && <Alert>{errorMessage(removeItem.error)}</Alert>}
+      {removeItem.isSuccess && <Alert tone="success">{t('common.deleted')}</Alert>}
       {save.isSuccess && <Alert tone="success">{t('common.saved')}</Alert>}
       <Card className="overflow-x-auto p-0">
         {rows.length === 0 ? (
@@ -205,8 +216,15 @@ function MenuEditor({ date, menu }: { date: string; menu: ManagerMenu }) {
                   <td className="p-2 text-right">
                     <Button
                       variant="ghost"
-                      aria-label={t('common.remove')}
-                      onClick={() => setRows(rows.filter((x) => x.dish_id !== r.dish_id))}
+                      aria-label={`${t('common.remove')}: ${r.dish_name}`}
+                      disabled={removeItem.isPending}
+                      onClick={() => {
+                        if (r.menu_item_id === null) {
+                          setRows(rows.filter((x) => x.dish_id !== r.dish_id));
+                        } else if (window.confirm(t('manager.menu.removeConfirm'))) {
+                          removeItem.mutate({ id: r.menu_item_id, dishId: r.dish_id });
+                        }
+                      }}
                     >
                       ✕
                     </Button>

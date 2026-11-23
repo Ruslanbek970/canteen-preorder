@@ -4,6 +4,7 @@ import pytest
 
 from app.models import UserRole
 
+TODAY = date(2026, 10, 12)
 TOMORROW = date(2026, 10, 13)
 
 
@@ -213,3 +214,101 @@ def test_catalog_forbidden_for_other_roles(client, factory, auth, role, method, 
         url, headers=auth(factory.user(role)), **({} if method == "get" else {"json": {}})
     )
     assert resp.status_code == 403
+
+
+def test_delete_new_dish(client, factory, auth, manager):
+    """Full CRUD on dishes: a dish that never was on a menu can be deleted with its recipe."""
+    h = auth(manager)
+    category = factory.category()
+    rice = factory.ingredient()
+    created = client.post(
+        "/api/v1/manager/dishes",
+        json={
+            "category_id": category.id,
+            "name_ru": "Рисовая каша",
+            "base_price": "400",
+            "ingredients": [{"ingredient_id": rice.id, "quantity": "80"}],
+        },
+        headers=h,
+    ).json()
+    resp = client.delete(f"/api/v1/manager/dishes/{created['id']}", headers=h)
+    assert resp.status_code == 204
+    assert client.get(f"/api/v1/manager/dishes/{created['id']}", headers=h).status_code == 404
+    assert created["id"] not in [
+        d["id"] for d in client.get("/api/v1/manager/dishes", headers=h).json()
+    ]
+    assert client.delete(f"/api/v1/manager/dishes/{created['id']}", headers=h).status_code == 404
+
+
+def test_dish_on_menu_cannot_be_deleted(client, factory, auth, manager):
+    item = factory.menu_item(manager.canteen, day=TOMORROW)
+    resp = client.delete(f"/api/v1/manager/dishes/{item.dish_id}", headers=auth(manager))
+    assert resp.status_code == 409
+    assert resp.json()["error"]["code"] == "dish_in_use"
+
+
+def test_delete_ingredient(client, factory, auth, manager):
+    h = auth(manager)
+    category = factory.category()
+    free = factory.ingredient()
+    used = factory.ingredient()
+    dish = client.post(
+        "/api/v1/manager/dishes",
+        json={
+            "category_id": category.id,
+            "name_ru": "Салат",
+            "base_price": "300",
+            "ingredients": [{"ingredient_id": used.id, "quantity": "50"}],
+        },
+        headers=h,
+    )
+    assert dish.status_code == 201
+    assert client.delete(f"/api/v1/manager/ingredients/{free.id}", headers=h).status_code == 204
+    resp = client.delete(f"/api/v1/manager/ingredients/{used.id}", headers=h)
+    assert resp.status_code == 409
+    assert resp.json()["error"]["code"] == "ingredient_in_use"
+    names = [i["name"] for i in client.get("/api/v1/manager/ingredients", headers=h).json()]
+    assert names == [used.name]
+    assert client.delete("/api/v1/manager/ingredients/999999", headers=h).status_code == 404
+
+
+def test_delete_menu_item(client, factory, auth, manager, freeze):
+    freeze("2026-10-12 09:00")
+    canteen = manager.canteen
+    keep = factory.menu_item(canteen, day=TODAY)
+    drop = factory.menu_item(canteen, day=TODAY)
+    h = auth(manager)
+    resp = client.delete(f"/api/v1/manager/menu-items/{drop.id}", headers=h)
+    assert resp.status_code == 200
+    assert [i["id"] for i in resp.json()["items"]] == [keep.id]
+
+    slot = factory.slot(canteen, day=TODAY)
+    order = client.post(
+        "/api/v1/orders",
+        json={
+            "canteen_id": canteen.id,
+            "pickup_slot_id": slot.id,
+            "items": [{"menu_item_id": keep.id, "quantity": 1}],
+            "allergy_warning_ack": False,
+        },
+        headers=auth(factory.user()),
+    )
+    assert order.status_code == 201, order.text
+    resp = client.delete(f"/api/v1/manager/menu-items/{keep.id}", headers=h)
+    assert resp.status_code == 409
+    assert resp.json()["error"]["code"] == "menu_item_has_orders"
+
+
+def test_manager_cannot_delete_other_canteen_menu_item(client, factory, auth, manager):
+    item = factory.menu_item(factory.canteen(), day=TOMORROW)
+    resp = client.delete(f"/api/v1/manager/menu-items/{item.id}", headers=auth(manager))
+    assert resp.status_code == 404
+
+
+@pytest.mark.parametrize("role", [UserRole.student, UserRole.cook, UserRole.cashier])
+@pytest.mark.parametrize(
+    "url",
+    ["/api/v1/manager/dishes/1", "/api/v1/manager/ingredients/1", "/api/v1/manager/menu-items/1"],
+)
+def test_catalog_delete_forbidden_for_other_roles(client, factory, auth, role, url):
+    assert client.delete(url, headers=auth(factory.user(role))).status_code == 403
