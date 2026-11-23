@@ -134,7 +134,9 @@
     "add": "Add",
     "back": "Back",
     "edit": "Edit",
-    "remove": "Remove"
+    "remove": "Remove",
+    "delete": "Delete",
+    "deleted": "Deleted"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -197,7 +199,11 @@
     "file_too_large": "The file is larger than 1 MB",
     "building_not_found": "Building not found",
     "user_not_found": "User not found",
-    "group_not_found": "Group not found"
+    "group_not_found": "Group not found",
+    "dish_in_use": "This dish has already been on a menu and can't be deleted. Switch it off instead",
+    "ingredient_in_use": "This ingredient is used in a recipe. Remove it from the recipe first",
+    "menu_item_in_use": "This item has discounts or write-offs and can't be deleted",
+    "internal_error": "Server error. Please try again later"
   },
   "units": {
     "g": "g",
@@ -273,14 +279,16 @@
       "ingredient": "Ingredient",
       "quantity": "Quantity",
       "addIngredient": "+ ingredient",
-      "allergenPreview": "Dish allergens"
+      "allergenPreview": "Dish allergens",
+      "deleteConfirm": "Delete dish “{{name}}”?"
     },
     "ingredients": {
       "title": "Ingredients",
       "add": "New ingredient",
       "empty": "No ingredients yet",
       "name": "Name",
-      "unit": "Unit"
+      "unit": "Unit",
+      "deleteConfirm": "Delete ingredient “{{name}}”?"
     },
     "menu": {
       "title": "Menu by date",
@@ -294,7 +302,8 @@
       "save": "Save menu",
       "chooseDish": "Choose a dish",
       "allDishesInMenu": "All active catalog dishes are already on this day’s menu.",
-      "newDish": "Add a new dish to the catalog"
+      "newDish": "Add a new dish to the catalog",
+      "removeConfirm": "Remove this dish from the menu for this day?"
     },
     "slots": {
       "title": "Pickup slots",

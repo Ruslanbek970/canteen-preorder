@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { apiGet, apiPost } from '@/api/client';
+import { apiDelete, apiGet, apiPost } from '@/api/client';
 import type { Allergen, Ingredient } from '@/api/types';
 import {
   Alert,
@@ -45,6 +45,10 @@ export function IngredientsPage() {
       void queryClient.invalidateQueries({ queryKey: ['manager', 'ingredients'] });
     },
   });
+  const remove = useMutation({
+    mutationFn: (id: number) => apiDelete<void>(`/manager/ingredients/${id}`),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['manager', 'ingredients'] }),
+  });
   const submit = (e: FormEvent) => {
     e.preventDefault();
     create.mutate();
@@ -52,6 +56,8 @@ export function IngredientsPage() {
 
   return (
     <ManagerShell title={t('manager.ingredients.title')}>
+      {remove.isError && <Alert>{errorMessage(remove.error)}</Alert>}
+      {remove.isSuccess && <Alert tone="success">{t('common.deleted')}</Alert>}
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <Card className="overflow-x-auto p-0">
           {ingredients.isPending ? (
@@ -67,6 +73,7 @@ export function IngredientsPage() {
                   <th className="p-2">{t('manager.ingredients.name')}</th>
                   <th className="p-2">{t('manager.ingredients.unit')}</th>
                   <th className="p-2">{t('menu.allergens')}</th>
+                  <th className="p-2" />
                 </tr>
               </thead>
               <tbody>
@@ -82,6 +89,22 @@ export function IngredientsPage() {
                           </Badge>
                         ))}
                       </div>
+                    </td>
+                    <td className="p-2 text-right">
+                      <Button
+                        variant="ghost"
+                        className="text-red-700"
+                        aria-label={`${t('common.delete')}: ${i.name}`}
+                        disabled={remove.isPending}
+                        onClick={() => {
+                          if (
+                            window.confirm(t('manager.ingredients.deleteConfirm', { name: i.name }))
+                          )
+                            remove.mutate(i.id);
+                        }}
+                      >
+                        {t('common.delete')}
+                      </Button>
                     </td>
                   </tr>
                 ))}

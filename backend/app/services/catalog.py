@@ -3,6 +3,7 @@
 from datetime import date
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
 from app.errors import ConflictError, NotFoundError, ValidationError
@@ -160,6 +161,18 @@ def update_dish(db: Session, dish_id: int, data: DishUpdate) -> DishOut:
     return get_dish(db, dish.id)
 
 
+def delete_dish(db: Session, dish_id: int) -> None:
+    """Hard delete. A dish that was ever on a menu keeps its history: switch it off instead."""
+    dish = _load_dish(db, dish_id)
+    if db.scalar(select(MenuItem.id).where(MenuItem.dish_id == dish_id).limit(1)):
+        raise ConflictError(
+            "dish_in_use",
+            "Блюдо уже было в меню, его нельзя удалить. Выключите его вместо удаления",
+        )
+    db.delete(dish)
+    db.commit()
+
+
 # ---- ingredients ----------------------------------------------------------
 
 
@@ -196,6 +209,20 @@ def create_ingredient(db: Session, data: IngredientCreate) -> IngredientOut:
     db.commit()
     db.refresh(ingredient)
     return _ingredient_out(ingredient)
+
+
+def delete_ingredient(db: Session, ingredient_id: int) -> None:
+    ingredient = db.get(Ingredient, ingredient_id)
+    if ingredient is None:
+        raise NotFoundError("ingredient", "Ингредиент не найден")
+    if db.scalar(
+        select(DishIngredient.dish_id).where(DishIngredient.ingredient_id == ingredient_id).limit(1)
+    ):
+        raise ConflictError(
+            "ingredient_in_use", "Ингредиент есть в рецепте блюда, сначала уберите его из рецепта"
+        )
+    db.delete(ingredient)
+    db.commit()
 
 
 # ---- menu of a day --------------------------------------------------------
@@ -328,3 +355,30 @@ def patch_menu_item(db: Session, canteen_id: int, item_id: int, data: MenuItemPa
         mi.available_portions = data.available_portions
     db.commit()
     return mi
+
+
+def delete_menu_item(db: Session, canteen_id: int, item_id: int) -> date:
+    """Removes a dish from the menu of a day if nobody has ordered it yet. Returns the menu date."""
+    mi = db.scalar(
+        select(MenuItem)
+        .where(MenuItem.id == item_id, MenuItem.canteen_id == canteen_id)
+        .with_for_update()
+    )
+    if mi is None:
+        raise NotFoundError("menu_item", "Позиция меню не найдена")
+    if db.scalar(select(OrderItem.id).where(OrderItem.menu_item_id == item_id).limit(1)):
+        raise ConflictError(
+            "menu_item_has_orders",
+            "Блюдо уже заказывали, его нельзя убрать из меню",
+            {"menu_item_id": mi.id},
+        )
+    day = mi.menu_date
+    db.delete(mi)
+    try:
+        db.commit()
+    except IntegrityError as exc:  # promotions or waste records still point at it
+        db.rollback()
+        raise ConflictError(
+            "menu_item_in_use", "На позицию есть скидки или списания, её нельзя удалить"
+        ) from exc
+    return day

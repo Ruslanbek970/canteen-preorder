@@ -22,6 +22,7 @@ Access-токен живёт 15 минут, refresh-токен 30 дней. Ка
 | 409 | бизнес-конфликт: `slot_full`, `sold_out`, `invalid_transition`, `cancel_too_late` и др. |
 | 422 | неверные данные (`validation_error`, `allergy_blocked`, `allergy_ack_required`, `menu_date_unavailable` и др.) |
 | 429 | лимит частоты (`rate_limited`): 5 неудачных входов в минуту с IP, 10 заказов в минуту |
+| 500 | непредвиденная ошибка сервера: `internal_error`, без подробностей и трассировки (они только в логе сервера) |
 
 ## Главные сценарии
 
@@ -152,11 +153,14 @@ curl -s -X POST localhost:8000/api/v1/auth/login \
 | POST | `/manager/dishes` | Create Dish |
 | GET | `/manager/dishes/{dish_id}` | Get Dish |
 | PATCH | `/manager/dishes/{dish_id}` | Update Dish |
+| DELETE | `/manager/dishes/{dish_id}` | Delete Dish (204; 409 `dish_in_use`, если блюдо уже было в меню) |
 | GET | `/manager/ingredients` | List Ingredients |
 | POST | `/manager/ingredients` | Create Ingredient |
+| DELETE | `/manager/ingredients/{ingredient_id}` | Delete Ingredient (204; 409 `ingredient_in_use`, если есть в рецепте) |
 | GET | `/manager/menu` | Get Menu |
 | PUT | `/manager/menu` | Put Menu |
 | PATCH | `/manager/menu-items/{item_id}` | Patch Menu Item |
+| DELETE | `/manager/menu-items/{item_id}` | Delete Menu Item (409 `menu_item_has_orders`, если уже заказывали) |
 
 ### admin
 
