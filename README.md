@@ -15,9 +15,10 @@
 ![Доска кухни](docs/screenshots/kitchen.png)
 ![Панель заведующей](docs/screenshots/manager-dashboard.png)
 
-Ещё скриншоты: [выдача](docs/screenshots/pickup.png),
+Ещё скриншоты: [вход](docs/screenshots/login.png), [выдача](docs/screenshots/pickup.png),
+[каталог блюд](docs/screenshots/manager-dishes.png),
 [прогноз против факта](docs/screenshots/manager-forecast.png),
-[скидки](docs/screenshots/manager-promotions.png).
+[скидки](docs/screenshots/manager-promotions.png), [админка](docs/screenshots/admin.png).
 
 ## Содержание
 
